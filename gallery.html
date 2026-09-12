@@ -1,0 +1,734 @@
+<title>The Week on Camera</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --ground:  #f7f5f0;
+  --surface: #fffefb;
+  --sunk:    #efece4;
+  --ink:     #17150f;
+  --ink-2:   #55514a;
+  --ink-3:   #8b867c;
+  --rule:    #e0dcd1;
+  --hair:    #c9c4b7;
+  --accent:  #b4400b;
+  --s1:      #2a78d6;
+  --s2:      #eb6834;
+  --s3:      #1baf7a;
+  --band:    rgba(42,120,214,0.16);
+  --day:     #eda100;
+  --twi:     #eb6834;
+  --night:   #4a3aa7;
+  --shadow:  0 1px 2px rgba(23,21,15,0.05);
+  --scrim:   rgba(23,21,15,0.88);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground:  #100f0d;
+    --surface: #1a1917;
+    --sunk:    #131210;
+    --ink:     #f6f3ec;
+    --ink-2:   #b8b3a7;
+    --ink-3:   #8b867c;
+    --rule:    #2c2a26;
+    --hair:    #3b3833;
+    --accent:  #f0803f;
+    --s1:      #3987e5;
+    --s2:      #d95926;
+    --s3:      #199e70;
+    --band:    rgba(57,135,229,0.22);
+    --day:     #c98500;
+    --twi:     #d95926;
+    --night:   #9085e9;
+    --shadow:  none;
+    --scrim:   rgba(8,8,7,0.92);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground:  #100f0d;
+  --surface: #1a1917;
+  --sunk:    #131210;
+  --ink:     #f6f3ec;
+  --ink-2:   #b8b3a7;
+  --ink-3:   #8b867c;
+  --rule:    #2c2a26;
+  --hair:    #3b3833;
+  --accent:  #f0803f;
+  --s1:      #3987e5;
+  --s2:      #d95926;
+  --s3:      #199e70;
+  --band:    rgba(57,135,229,0.22);
+  --day:     #c98500;
+  --twi:     #d95926;
+  --night:   #9085e9;
+  --shadow:  none;
+  --scrim:   rgba(8,8,7,0.92);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font: 400 16px/1.6 "Source Sans 3", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 0 96px; }
+
+header { padding-block: 56px 32px; border-bottom: 2px solid var(--ink); }
+.eyebrow {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 15px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); margin: 0 0 10px;
+}
+h1 {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-weight: 600; font-size: clamp(44px, 9vw, 84px); line-height: .94;
+  letter-spacing: -.01em; margin: 0; text-transform: uppercase; text-wrap: balance;
+}
+.standfirst { margin: 18px 0 0; max-width: 64ch; font-size: 19px; color: var(--ink-2); }
+.crosslink {
+  margin-top: 18px; font-size: 14.5px;
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+a { color: var(--accent); }
+
+h2 {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 28px; font-weight: 600; letter-spacing: .01em; text-transform: uppercase;
+  margin: 44px 0 6px;
+}
+.lede { margin: 0 0 22px; max-width: 68ch; color: var(--ink-2); }
+
+/* ------------------------------------------------------------- timeline */
+.timeline {
+  background: var(--surface); border: 1px solid var(--rule);
+  padding: 18px 18px 10px; box-shadow: var(--shadow); margin-top: 8px;
+}
+.timeline-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.timeline-title {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 18px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 9px; height: 9px; border-radius: 9px; flex: none; }
+.swatch { width: 13px; height: 3px; border-radius: 2px; flex: none; }
+.swatch.area { height: 11px; border-radius: 2px; }
+.tl-scroll { overflow-x: auto; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* ------------------------------------------------------------- filters */
+.controls {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin-top: 24px; padding: 12px 14px; background: var(--sunk);
+  border: 1px solid var(--rule);
+}
+.controls .label {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-3); margin-right: 2px;
+}
+button.seg {
+  font: 500 13px/1 "Source Sans 3", system-ui, sans-serif;
+  padding: 8px 13px; min-height: 34px; background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--hair); cursor: pointer; border-radius: 2px;
+}
+button.seg:hover { color: var(--ink); border-color: var(--ink-3); }
+button.seg[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+button.seg:focus-visible, a:focus-visible, .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- grid */
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+  gap: 14px; margin-top: 22px;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--rule); padding: 0;
+  cursor: pointer; text-align: left; display: flex; flex-direction: column;
+  box-shadow: var(--shadow); font: inherit; color: inherit;
+}
+.card:hover { border-color: var(--ink-3); }
+.card .shot {
+  width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block;
+  background: var(--sunk); max-width: 100%;
+}
+.card .meta { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; }
+.card .when {
+  font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.card .name {
+  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 15px;
+  letter-spacing: .03em; text-transform: uppercase; line-height: 1.2;
+}
+.card .wind { font-size: 12px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
+.tag {
+  display: inline-block; width: 7px; height: 7px; border-radius: 7px; flex: none;
+}
+.empty { color: var(--ink-3); padding: 28px 0; }
+
+/* ----------------------------------------------------------- lightbox */
+dialog#box {
+  border: none; padding: 0; max-width: 100vw; max-height: 100vh;
+  width: 100%; height: 100%; background: var(--scrim); color: #fff;
+}
+dialog#box::backdrop { background: var(--scrim); }
+.box-inner {
+  display: grid; grid-template-rows: 1fr auto; height: 100%; gap: 0;
+}
+.stage {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 0; padding: 16px 16px 0; position: relative;
+}
+.stage img, .stage video {
+  max-width: 100%; max-height: 100%; object-fit: contain; display: block;
+}
+/* The readout sits over the media, bottom-left, where a burned-in timecode
+   would go on a camera - and it is the wind at the instant on screen. */
+.readout {
+  position: absolute; left: 26px; bottom: 14px;
+  background: rgba(8,8,7,.72); border: 1px solid rgba(255,255,255,.18);
+  padding: 10px 13px; border-radius: 3px; backdrop-filter: blur(6px);
+  display: grid; gap: 5px; min-width: 190px; pointer-events: none;
+}
+.readout .r-when {
+  font-family: "JetBrains Mono", monospace; font-size: 12px; color: #d8d4c8;
+  font-variant-numeric: tabular-nums; letter-spacing: .01em;
+}
+.readout .r-main { display: flex; align-items: center; gap: 11px; }
+.readout .r-speed {
+  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 32px;
+  font-weight: 600; line-height: 1;
+}
+.readout .r-speed small { font-size: 14px; font-weight: 500; color: #d8d4c8; margin-left: 3px; }
+.readout .r-dir {
+  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 13px;
+  letter-spacing: .08em; text-transform: uppercase; color: #d8d4c8;
+}
+.readout .r-none { font-size: 12.5px; color: #b4afa2; max-width: 22ch; line-height: 1.45; }
+.arrow { flex: none; }
+
+.box-foot {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 20px; padding: 14px 26px 20px; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,.14);
+}
+.box-foot .t {
+  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 20px;
+  letter-spacing: .04em; text-transform: uppercase; margin: 0 0 3px;
+}
+.box-foot .d { color: #b4afa2; font-size: 14px; margin: 0; max-width: 62ch; }
+.box-foot .nav { display: flex; gap: 8px; align-items: center; }
+button.ghost {
+  font: 500 13px/1 "Source Sans 3", system-ui, sans-serif;
+  padding: 9px 14px; min-height: 36px; background: transparent; color: #f6f3ec;
+  border: 1px solid rgba(255,255,255,.28); cursor: pointer; border-radius: 2px;
+}
+button.ghost:hover { border-color: #fff; }
+button.ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.note {
+  border-left: 3px solid var(--accent); padding: 2px 0 2px 16px;
+  margin: 22px 0 0; color: var(--ink-2); font-size: 15px; max-width: 66ch;
+}
+.caveat {
+  background: var(--sunk); border: 1px solid var(--rule); padding: 16px 18px;
+  margin-top: 22px; font-size: 15px; color: var(--ink-2);
+}
+.caveat h3 {
+  font-family: "Barlow Condensed", system-ui, sans-serif; text-transform: uppercase;
+  letter-spacing: .08em; font-size: 15px; margin: 0 0 7px; color: var(--ink);
+}
+.caveat p { margin: 0 0 9px; } .caveat p:last-child { margin-bottom: 0; }
+footer {
+  margin-top: 60px; padding-top: 22px; border-top: 1px solid var(--rule);
+  font-size: 13.5px; color: var(--ink-3);
+}
+code { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--ink-2); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (max-width: 640px) {
+  .readout { left: 50%; transform: translateX(-50%); bottom: 10px; min-width: 0; }
+  .stage { padding: 10px 10px 0; }
+}
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Cosmic Beacon &middot; Camera Record</p>
+  <h1>The Week<br>on Camera</h1>
+  <p class="standfirst">
+    Every panorama, stack and time-lapse the mast camera produced at Black Rock
+    City, laid out on the week they happened. Open any of them and the wind
+    recorded at that moment is read out over the picture &mdash; and as a
+    time-lapse plays, the readout follows it minute by minute.
+  </p>
+  <p class="crosslink"><a href="index.html">&larr; The instrument record: wind, position, temperature</a></p>
+</header>
+
+<h2>The week</h2>
+<p class="lede">
+  Wind speed across the bottom, every piece of media placed at the time it was
+  taken. Click a marker to open it; a time-lapse is drawn as a bar spanning the
+  hours it covers.
+</p>
+
+<div class="timeline">
+  <div class="timeline-head">
+    <span class="timeline-title">Media on the record</span>
+    <span class="legend" id="tl-legend"></span>
+  </div>
+  <div class="tl-scroll"><div id="timeline"></div></div>
+</div>
+
+<div class="controls" role="group" aria-label="Filter the gallery">
+  <span class="label">Show</span>
+  <button class="seg" id="f-video" aria-pressed="true">Time-lapses</button>
+  <button class="seg" id="f-pano" aria-pressed="true">Panoramas</button>
+  <button class="seg" id="f-stack" aria-pressed="true">Stacks</button>
+  <button class="seg" id="f-still" aria-pressed="true">Stills</button>
+  <span class="label" style="margin-left:10px">Light</span>
+  <button class="seg" id="f-day" aria-pressed="true">Day</button>
+  <button class="seg" id="f-twilight" aria-pressed="true">Twilight</button>
+  <button class="seg" id="f-night" aria-pressed="true">Night</button>
+</div>
+
+<div class="grid" id="grid"></div>
+<p class="empty" id="empty" hidden>Nothing matches those filters.</p>
+
+<div class="caveat" id="notes"></div>
+
+<footer>
+  <p id="prov"></p>
+  <p>
+    Built by <code>report/derive.py</code> from <code>pano/work/out</code>:
+    <code>media.py</code> recovers when each frame was taken from the pipeline's
+    own catalogue, and the wind comes from the same <code>data.json</code> the
+    <a href="index.html">instrument record</a> is drawn from.
+  </p>
+</footer>
+</div>
+
+<dialog id="box" aria-label="Media viewer">
+  <div class="box-inner">
+    <div class="stage" id="stage"></div>
+    <div class="box-foot">
+      <div>
+        <p class="t" id="box-title"></p>
+        <p class="d" id="box-desc"></p>
+      </div>
+      <div class="nav">
+        <button class="ghost" id="prev">&larr; Previous</button>
+        <button class="ghost" id="next">Next &rarr;</button>
+        <button class="ghost" id="close">Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const SVG = "http://www.w3.org/2000/svg";
+const el = (n, a = {}) => {
+  const e = document.createElementNS(SVG, n);
+  for (const k in a) e.setAttribute(k, a[k]);
+  return e;
+};
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const MPH = 2.2369362921;
+const PTS = ["N","NNE","NE","ENE","E","ESE","SE","SSE",
+             "S","SSW","SW","WSW","W","WNW","NW","NNW"];
+const point = d => PTS[Math.floor((((d % 360) + 371.25) % 360) / 22.5)];
+
+const PDT = -7 * 3600;
+const asPDT = t => new Date((t + PDT) * 1000);
+const fmtDay = t => asPDT(t).toUTCString().slice(0, 3);
+const fmtDate = t => asPDT(t).toUTCString().slice(5, 11);
+const fmtTime = t => asPDT(t).toUTCString().slice(17, 22);
+const fmtFull = t => `${fmtDay(t)} ${fmtDate(t)} ${fmtTime(t)}`;
+
+let D = null, M = null, ITEMS = [], VIEW = [], WIND = new Map();
+const show = { video: true, pano: true, stack: true, still: true,
+               day: true, twilight: true, night: true };
+
+/* Ten-minute bins, keyed so a timestamp finds its own bin in one lookup.  A
+   moment with no bin is a moment the beacon was not recording, and the page says
+   so rather than reaching for the nearest one - the gaps here run to hours. */
+function indexWind(data) {
+  const m = new Map();
+  for (const b of data.wind) m.set(b.t, b);
+  return m;
+}
+const windAt = t => WIND.get(Math.floor(t / 600) * 600) || null;
+
+/* ------------------------------------------------------------- timeline */
+function drawTimeline() {
+  const host = $("timeline");
+  const W = 1140, H = 262, M0 = { t: 60, r: 16, b: 26, l: 40 };
+  const iw = W - M0.l - M0.r, ih = H - M0.t - M0.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Every image and video placed on the week, over wind speed" });
+  svg.style.minWidth = "760px";
+  const g = el("g", { transform: `translate(${M0.l},${M0.t})` });
+  svg.appendChild(g);
+
+  // The axis spans the media, not the wind: six items sit outside the recorded
+  // week and dropping them off the end would hide that they exist.
+  const times = ITEMS.flatMap(i => [i.t, i.until || i.t]);
+  const t0 = Math.min(...times, D.wind[0].t) - 3600;
+  const t1 = Math.max(...times, D.wind[D.wind.length - 1].t) + 3600;
+  const X = t => (t - t0) / (t1 - t0) * iw;
+  const top = 20;
+  const Y = v => ih - v / top * ih;
+
+  // Wind, as the ground the media sits on.
+  for (const o of D.coverage.wind.outages) {
+    if (o.hours < 0.5) continue;
+    g.appendChild(el("rect", { x: X(o.from), y: 0,
+      width: Math.max(1, X(o.to) - X(o.from)), height: ih,
+      fill: css("--sunk"), stroke: css("--rule"), "stroke-width": 1 }));
+  }
+  for (const v of [0, 10, 20]) {
+    g.appendChild(el("line", { x1: 0, x2: iw, y1: Y(v), y2: Y(v),
+      stroke: css("--rule"), "stroke-width": 1 }));
+    const lab = el("text", { x: -8, y: Y(v) + 4, "text-anchor": "end",
+      fill: css("--ink-3"), "font-size": 10.5,
+      "font-family": "JetBrains Mono, monospace" });
+    lab.textContent = v;
+    g.appendChild(lab);
+  }
+  let band = "", line = "";
+  const runs = [];
+  let run = [];
+  for (const b of D.wind) {
+    if (run.length && b.t - run[run.length - 1].t > 1800) { runs.push(run); run = []; }
+    run.push(b);
+  }
+  if (run.length) runs.push(run);
+  for (const seg of runs) {
+    band = ""; line = "";
+    seg.forEach((b, i) => { band += (i ? "L" : "M") + X(b.t) + " " + Y(b.max); });
+    for (let i = seg.length - 1; i >= 0; i--) band += "L" + X(seg[i].t) + " " + Y(seg[i].min);
+    g.appendChild(el("path", { d: band + "Z", fill: css("--band"), stroke: "none" }));
+    seg.forEach((b, i) => { line += (i ? "L" : "M") + X(b.t) + " " + Y(b.mean); });
+    g.appendChild(el("path", { d: line, fill: "none", stroke: css("--s1"),
+      "stroke-width": 1.5, "stroke-linejoin": "round" }));
+  }
+
+  // Midnights.
+  const firstMidnight = Math.ceil((t0 + PDT) / 86400) * 86400 - PDT;
+  for (let t = firstMidnight; t < t1; t += 86400) {
+    g.appendChild(el("line", { x1: X(t), x2: X(t), y1: -M0.t + 16, y2: ih,
+      stroke: css("--hair"), "stroke-width": 1 }));
+    const lab = el("text", { x: X(t) + 6, y: ih + 17, fill: css("--ink-3"),
+      "font-size": 11, "font-family": "Barlow Condensed, sans-serif",
+      "letter-spacing": ".08em" });
+    lab.textContent = `${fmtDay(t).toUpperCase()} ${fmtDate(t).split(" ")[0]}`;
+    g.appendChild(lab);
+  }
+  g.appendChild(el("line", { x1: 0, x2: iw, y1: ih, y2: ih,
+    stroke: css("--hair"), "stroke-width": 1 }));
+
+  // Media above the plot: videos as spans, everything else as a mark.  Rows are
+  // assigned so that marks close in time do not land on top of each other.
+  const rows = [[], [], [], []];
+  const place = item => {
+    const x = X(item.t);
+    for (let r = 0; r < rows.length; r++) {
+      if (rows[r].every(o => Math.abs(o - x) > 9)) { rows[r].push(x); return r; }
+    }
+    rows[rows.length - 1].push(x);
+    return rows.length - 1;
+  };
+
+  const lane = (r) => -M0.t + 10 + r * 11;
+  for (const item of ITEMS) {
+    const visible = VIEW.includes(item);
+    const colour = item.kind === "video" ? css("--accent")
+      : item.light === "night" ? css("--night")
+      : item.light === "twilight" ? css("--twi") : css("--day");
+    const r = place(item);
+    const y = lane(r);
+
+    if (item.until && item.until - item.t > 1800) {
+      const w = Math.max(3, X(item.until) - X(item.t));
+      const bar = el("rect", { x: X(item.t), y: y - 3, width: w, height: 7, rx: 3,
+        fill: colour, opacity: visible ? 0.9 : 0.18 });
+      bar.style.cursor = "pointer";
+      bar.addEventListener("click", () => open(item));
+      bar.appendChild(el("title")).textContent =
+        `${item.title} — ${fmtFull(item.t)} to ${fmtFull(item.until)}`;
+      g.appendChild(bar);
+    } else {
+      // A stack pooled from several days is drawn hollow and placed at its
+      // midpoint: it is an aggregate, not something that happened at an instant,
+      // and a solid dot would claim otherwise.
+      const pooled = item.days > 1;
+      const dot = el("circle", { cx: X(item.t), cy: y,
+        r: pooled ? 5 : 4.5,
+        fill: pooled ? css("--surface") : colour,
+        stroke: pooled ? colour : css("--surface"),
+        "stroke-width": pooled ? 2 : 1.5,
+        opacity: visible ? 1 : 0.18 });
+      dot.style.cursor = "pointer";
+      dot.addEventListener("click", () => open(item));
+      dot.appendChild(el("title")).textContent = pooled
+        ? `${item.title} — pooled from ${item.days} days, ${fmtDate(item.from)} to ${fmtDate(item.to)}`
+        : `${item.title} — ${fmtFull(item.t)}`;
+      g.appendChild(dot);
+    }
+  }
+
+  host.replaceChildren(svg);
+  $("tl-legend").innerHTML =
+    `<span><span class="dot" style="background:${css("--accent")}"></span>Time-lapse</span>
+     <span><span class="dot" style="background:${css("--day")}"></span>Day</span>
+     <span><span class="dot" style="background:${css("--twi")}"></span>Twilight</span>
+     <span><span class="dot" style="background:${css("--night")}"></span>Night</span>
+     <span><span class="dot" style="background:transparent;border:2px solid ${css("--ink-3")};box-sizing:border-box"></span>Pooled over days</span>
+     <span><span class="swatch" style="background:${css("--s1")}"></span>Wind, m/s</span>
+     <span><span class="swatch area" style="background:${css("--sunk")};border:1px solid ${css("--rule")}"></span>Not recorded</span>`;
+}
+
+/* ----------------------------------------------------------------- grid */
+function drawGrid() {
+  const host = $("grid");
+  host.replaceChildren();
+  for (const item of VIEW) {
+    const card = document.createElement("button");
+    card.className = "card";
+    card.type = "button";
+    const w = item.kind === "video" ? null : windAt(item.t);
+    const colour = item.kind === "video" ? "var(--accent)"
+      : item.light === "night" ? "var(--night)"
+      : item.light === "twilight" ? "var(--twi)" : "var(--day)";
+    card.innerHTML = `
+      <img class="shot" src="${item.thumb}" alt="${item.title}" loading="lazy" decoding="async">
+      <span class="meta">
+        <span class="when">${fmtFull(item.t)}${item.until && item.until - item.t > 1800
+          ? " → " + fmtTime(item.until) : ""}</span>
+        <span class="name">${item.title}</span>
+        <span class="wind"><span class="tag" style="background:${colour}"></span>${
+          item.kind === "video" ? item.frames + " frames"
+          : w ? w.mean.toFixed(1) + " m/s " + (w.true != null ? point(w.true) : "")
+              : "no wind recorded"}</span>
+      </span>`;
+    card.addEventListener("click", () => open(item));
+    host.appendChild(card);
+  }
+  $("empty").hidden = VIEW.length > 0;
+}
+
+/* ------------------------------------------------------------- readout */
+// An arrow that points the way the wind was going, with the bearing it came
+// from written beside it.  Drawn rather than written because a direction is a
+// direction; the text is there so it is never colour-and-angle alone.
+function arrow(deg) {
+  const s = el("svg", { width: 34, height: 34, viewBox: "0 0 34 34",
+                        class: "arrow", role: "img",
+                        "aria-label": `wind from ${Math.round(deg)} degrees` });
+  s.appendChild(el("circle", { cx: 17, cy: 17, r: 15.5, fill: "none",
+    stroke: "rgba(255,255,255,.28)", "stroke-width": 1 }));
+  const g = el("g", { transform: `rotate(${(deg + 180) % 360} 17 17)` });
+  g.appendChild(el("path", { d: "M17 4 L17 27", stroke: "#fff", "stroke-width": 2,
+    "stroke-linecap": "round" }));
+  g.appendChild(el("path", { d: "M11.5 21 L17 27 L22.5 21", fill: "none",
+    stroke: "#fff", "stroke-width": 2, "stroke-linecap": "round",
+    "stroke-linejoin": "round" }));
+  s.appendChild(g);
+  return s;
+}
+
+function readout(t) {
+  const box = document.createElement("div");
+  box.className = "readout";
+  const w = windAt(t);
+  const when = document.createElement("div");
+  when.className = "r-when";
+  when.textContent = fmtFull(t);
+  box.appendChild(when);
+
+  if (!w) {
+    const none = document.createElement("div");
+    none.className = "r-none";
+    none.textContent = "No wind recorded at this moment — the beacon was not logging.";
+    box.appendChild(none);
+    return box;
+  }
+  const main = document.createElement("div");
+  main.className = "r-main";
+  if (w.true != null) main.appendChild(arrow(w.true));
+  const nums = document.createElement("div");
+  nums.innerHTML =
+    `<div class="r-speed">${w.mean.toFixed(1)}<small>m/s</small></div>
+     <div class="r-dir">${w.true != null ? "from " + point(w.true) + " " + Math.round(w.true) + "°"
+       : "direction unrecorded"} · gust ${w.max.toFixed(1)}</div>`;
+  main.appendChild(nums);
+  box.appendChild(main);
+  return box;
+}
+
+/* ------------------------------------------------------------ lightbox */
+let current = null, raf = 0;
+
+function open(item) {
+  current = item;
+  const stage = $("stage");
+  stage.replaceChildren();
+  cancelAnimationFrame(raf);
+
+  if (item.kind === "video") {
+    const v = document.createElement("video");
+    v.src = item.src;
+    v.controls = true;
+    v.playsInline = true;
+    v.preload = "metadata";
+    v.poster = item.thumb;
+    stage.appendChild(v);
+
+    let panel = readout(item.t);
+    stage.appendChild(panel);
+
+    // Playback position maps onto wall-clock time through the frame table the
+    // render was made from, so the readout is the wind in the frame on screen
+    // rather than an average over the clip.
+    const tick = () => {
+      if (!v.isConnected) return;
+      const i = Math.min(item.times.length - 1,
+                         Math.max(0, Math.round(v.currentTime / item.duration
+                                                * (item.frames - 1))));
+      const t = item.times[i];
+      const next = readout(t);
+      panel.replaceWith(next);
+      panel = next;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  } else {
+    const img = document.createElement("img");
+    img.src = item.view;
+    img.alt = item.title;
+    stage.appendChild(img);
+    // A pooled stack has no single moment, so it gets no instantaneous wind -
+    // the footer says what it is instead.
+    if (!(item.days > 1)) stage.appendChild(readout(item.t));
+  }
+
+  $("box-title").textContent = item.title;
+  const w = windAt(item.t);
+  const bits = [];
+  if (item.days > 1)
+    bits.push(`Pooled from ${item.days} days, ${fmtFull(item.from)} to ${fmtFull(item.to)}`);
+  else if (item.until && item.until - item.t > 1800)
+    bits.push(`${fmtFull(item.t)} to ${fmtFull(item.until)}`);
+  else bits.push(fmtFull(item.t));
+  if (item.note) bits.push(item.note);
+  if (item.kind !== "video" && item.heading != null)
+    bits.push(`Camera facing ${Math.round(item.heading)}° in its own frame.`);
+  if (item.kind === "video" && w == null)
+    bits.push("Wind follows playback where the record has it.");
+  $("box-desc").textContent = bits.join(" · ");
+  if (!$("box").open) $("box").showModal();
+}
+
+function step(by) {
+  if (!current) return;
+  const i = VIEW.indexOf(current);
+  if (i < 0) return;
+  const next = VIEW[(i + by + VIEW.length) % VIEW.length];
+  if (next) open(next);
+}
+
+/* ------------------------------------------------------------- wiring */
+function applyFilters() {
+  VIEW = ITEMS.filter(i => {
+    if (!show[i.kind]) return false;
+    if (i.kind !== "video" && i.light && !show[i.light]) return false;
+    return true;
+  });
+  drawGrid();
+  drawTimeline();
+}
+
+function toggle(id, key) {
+  const b = $(id);
+  b.addEventListener("click", () => {
+    show[key] = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", String(show[key]));
+    applyFilters();
+  });
+}
+
+function boot([data, manifest]) {
+  D = data;
+  M = manifest;
+  WIND = indexWind(D);
+
+  ITEMS = [...M.videos.map(v => ({ ...v, kind: "video" })), ...M.stills]
+    .sort((a, b) => a.t - b.t);
+
+  applyFilters();
+
+  toggle("f-video", "video"); toggle("f-pano", "pano");
+  toggle("f-stack", "stack"); toggle("f-still", "still");
+  toggle("f-day", "day"); toggle("f-twilight", "twilight");
+  toggle("f-night", "night");
+
+  $("prev").addEventListener("click", () => step(-1));
+  $("next").addEventListener("click", () => step(1));
+  $("close").addEventListener("click", () => $("box").close());
+  $("box").addEventListener("close", () => {
+    cancelAnimationFrame(raf);
+    $("stage").replaceChildren();
+    current = null;
+  });
+  $("box").addEventListener("click", ev => {
+    // Clicking the backdrop closes; clicking the picture or controls does not.
+    if (ev.target === $("box")) $("box").close();
+  });
+  addEventListener("keydown", ev => {
+    if (!$("box").open) return;
+    if (ev.key === "ArrowLeft") step(-1);
+    if (ev.key === "ArrowRight") step(1);
+  });
+
+  const counts = { video: 0, pano: 0, stack: 0, still: 0 };
+  for (const i of ITEMS) counts[i.kind]++;
+  const outside = ITEMS.filter(i => !windAt(i.t)).length;
+
+  $("notes").innerHTML = `
+    <h3>What is here, and what the wind readout means</h3>
+    <p>${counts.still} sharpest-frame stills, ${counts.pano} panorama sweeps,
+    ${counts.stack} stacked exposures and ${counts.video} time-lapses. The
+    time-lapses carry a frame-by-frame time axis recovered from the pipeline's
+    own record of which frames went into them, so the wind readout follows
+    playback rather than averaging the clip.</p>
+    <p>The wind is the ten-minute bin containing that moment: its mean, its gust,
+    and the direction corrected by the ${D.heading ? D.heading.offset + "°" : ""}
+    mast offset recovered on the
+    <a href="index.html" style="color:#f0803f">instrument page</a>.
+    ${outside} item${outside === 1 ? "" : "s"} fall outside the recorded week and
+    say <em>no wind recorded</em> rather than borrowing a nearby reading.</p>
+    ${M.broken.length ? `<p><b>Not published:</b> ${M.broken.map(b =>
+      `<code>${b.id}</code> — ${b.note}`).join("; ")}</p>` : ""}`;
+
+  $("prov").textContent =
+    `${ITEMS.length} items from the camera's ${M.stills.length + M.videos.length} `
+    + `finished outputs. Stills are 2000px viewing copies; the time-lapses are the `
+    + `web encodes. Full-resolution originals stay in the pipeline.`;
+}
+
+Promise.all([
+  fetch("data.json").then(r => r.json()),
+  fetch("media.json").then(r => r.json()),
+]).then(boot).catch(err => {
+  document.querySelector(".wrap").insertAdjacentHTML("beforeend",
+    `<div class="caveat"><h3>Could not load the gallery</h3>
+     <p>${err}. Run <code>python3 report/derive.py</code> and serve this
+     directory.</p></div>`);
+});
+</script>
