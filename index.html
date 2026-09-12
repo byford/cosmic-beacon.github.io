@@ -1,0 +1,1153 @@
+<title>Mast Log, Black Rock City 2026</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --ground:       #f7f5f0;
+  --surface:      #fffefb;
+  --sunk:         #efece4;
+  --ink:          #17150f;
+  --ink-2:        #55514a;
+  --ink-3:        #8b867c;
+  --rule:         #e0dcd1;
+  --hair:         #c9c4b7;
+  --accent:       #b4400b;
+  --s1:           #2a78d6;
+  --s2:           #eb6834;
+  --s3:           #1baf7a;
+  --band:         rgba(42,120,214,0.16);
+  --warn:         #fab219;
+  --crit:         #d03b3b;
+  --good:         #0ca30c;
+  --gap:          rgba(23,21,15,0.05);
+  --shadow:       0 1px 2px rgba(23,21,15,0.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground:  #100f0d;
+    --surface: #1a1917;
+    --sunk:    #131210;
+    --ink:     #f6f3ec;
+    --ink-2:   #b8b3a7;
+    --ink-3:   #8b867c;
+    --rule:    #2c2a26;
+    --hair:    #3b3833;
+    --accent:  #f0803f;
+    --s1:      #3987e5;
+    --s2:      #d95926;
+    --s3:      #199e70;
+    --band:    rgba(57,135,229,0.22);
+    --warn:    #fab219;
+    --crit:    #e06060;
+    --good:    #0ca30c;
+    --gap:     rgba(246,243,236,0.06);
+    --shadow:  none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground:  #100f0d;
+  --surface: #1a1917;
+  --sunk:    #131210;
+  --ink:     #f6f3ec;
+  --ink-2:   #b8b3a7;
+  --ink-3:   #8b867c;
+  --rule:    #2c2a26;
+  --hair:    #3b3833;
+  --accent:  #f0803f;
+  --s1:      #3987e5;
+  --s2:      #d95926;
+  --s3:      #199e70;
+  --band:    rgba(57,135,229,0.22);
+  --warn:    #fab219;
+  --crit:    #e06060;
+  --good:    #0ca30c;
+  --gap:     rgba(246,243,236,0.06);
+  --shadow:  none;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 16px/1.6 "Source Sans 3", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 0 96px; }
+
+/* ---------------------------------------------------------------- masthead */
+header { padding-block: 56px 36px; border-bottom: 2px solid var(--ink); }
+.eyebrow {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 15px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); margin: 0 0 10px;
+}
+h1 {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-weight: 600; font-size: clamp(44px, 9vw, 88px); line-height: .94;
+  letter-spacing: -.01em; margin: 0; text-wrap: balance; text-transform: uppercase;
+}
+.standfirst {
+  margin: 20px 0 0; max-width: 64ch; font-size: 19px; color: var(--ink-2);
+}
+.coords {
+  margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px 28px;
+  font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px;
+  color: var(--ink-3); letter-spacing: .02em;
+}
+.coords b { color: var(--ink-2); font-weight: 500; }
+
+/* ------------------------------------------------------------------ layout */
+section { padding-block: 48px 0; }
+h2 {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 30px; font-weight: 600; letter-spacing: .01em; text-transform: uppercase;
+  margin: 0 0 6px; display: flex; align-items: baseline; gap: 14px;
+}
+h2 .num {
+  font-size: 14px; color: var(--accent); letter-spacing: .1em;
+  font-variant-numeric: tabular-nums;
+}
+.lede { margin: 0 0 28px; max-width: 68ch; color: var(--ink-2); }
+p { max-width: 68ch; }
+a { color: var(--accent); }
+
+/* ------------------------------------------------------------- stat strip */
+.stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+  gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+  margin-top: 32px;
+}
+.stat { background: var(--surface); padding: 18px 18px 16px; }
+.stat .k {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3);
+}
+.stat .v {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 38px; font-weight: 600; line-height: 1.05; margin-top: 4px;
+}
+.stat .v small { font-size: 16px; font-weight: 500; color: var(--ink-2); margin-left: 3px; }
+.stat .sub { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+
+/* ----------------------------------------------------------------- panels */
+.panel {
+  background: var(--surface); border: 1px solid var(--rule);
+  padding: 22px 22px 16px; margin-top: 22px; box-shadow: var(--shadow);
+}
+.panel-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 4px;
+}
+.panel-title {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 19px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+}
+.panel-note { font-size: 13px; color: var(--ink-3); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.swatch { width: 13px; height: 3px; border-radius: 2px; flex: none; }
+.swatch.area { height: 11px; border-radius: 2px; }
+
+figure { margin: 0; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart-scroll { overflow-x: auto; }
+
+/* ---------------------------------------------------------------- controls */
+.controls {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin-top: 28px; padding: 12px 14px; background: var(--sunk);
+  border: 1px solid var(--rule);
+}
+.controls .label {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3);
+  margin-right: 2px;
+}
+button.seg {
+  font: 500 13px/1 "Source Sans 3", system-ui, sans-serif;
+  padding: 8px 13px; min-height: 34px; background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--hair); cursor: pointer; border-radius: 2px;
+}
+button.seg:hover { color: var(--ink); border-color: var(--ink-3); }
+button.seg[aria-pressed="true"] {
+  background: var(--ink); color: var(--ground); border-color: var(--ink);
+}
+button.seg:focus-visible, summary:focus-visible, a:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- tooltip */
+.tip {
+  position: fixed; pointer-events: none; z-index: 30; opacity: 0;
+  transition: opacity .1s; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--hair); box-shadow: 0 4px 14px rgba(0,0,0,.14);
+  padding: 9px 11px; font-size: 13px; min-width: 150px; border-radius: 3px;
+}
+.tip .when {
+  font-family: "Barlow Condensed", system-ui, sans-serif; letter-spacing: .07em;
+  text-transform: uppercase; font-size: 12px; color: var(--ink-3);
+  border-bottom: 1px solid var(--rule); padding-bottom: 5px; margin-bottom: 6px;
+}
+.tip .row { display: flex; justify-content: space-between; gap: 18px; }
+.tip .row b { font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 12.5px; }
+.tip .row i { font-style: normal; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+
+/* ------------------------------------------------------------------ table */
+details { margin-top: 14px; border-top: 1px solid var(--rule); }
+summary {
+  cursor: pointer; padding-top: 11px; font-size: 13px; color: var(--ink-2);
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+summary:hover { color: var(--accent); }
+.tablebox { max-height: 340px; overflow: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td {
+  text-align: right; padding: 5px 9px; border-bottom: 1px solid var(--rule);
+  font-variant-numeric: tabular-nums; font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px; white-space: nowrap;
+}
+th {
+  position: sticky; top: 0; background: var(--surface); color: var(--ink-3);
+  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 12px;
+  letter-spacing: .09em; text-transform: uppercase; text-align: right;
+}
+th:first-child, td:first-child { text-align: left; }
+
+/* ------------------------------------------------------------------ notes */
+.note {
+  border-left: 3px solid var(--accent); padding: 2px 0 2px 16px;
+  margin: 22px 0 0; color: var(--ink-2); font-size: 15px; max-width: 66ch;
+}
+.note b { color: var(--ink); }
+.caveat {
+  background: var(--sunk); border: 1px solid var(--rule); padding: 16px 18px;
+  margin-top: 22px; font-size: 15px; color: var(--ink-2);
+}
+.caveat h3 {
+  font-family: "Barlow Condensed", system-ui, sans-serif; text-transform: uppercase;
+  letter-spacing: .08em; font-size: 15px; margin: 0 0 7px; color: var(--ink);
+}
+.caveat p { margin: 0 0 9px; }
+.caveat p:last-child { margin-bottom: 0; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px;
+  padding: 2px 9px; border-radius: 99px; border: 1px solid var(--hair);
+  color: var(--ink-2); font-family: "Barlow Condensed", system-ui, sans-serif;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.pill::before {
+  content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--ink-3);
+}
+.pill.ok::before { background: var(--good); }
+.pill.warn::before { background: var(--warn); }
+.pill.off::before { background: var(--crit); }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.grid2 > .panel { margin-top: 0; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+
+footer {
+  margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--rule);
+  font-size: 13.5px; color: var(--ink-3);
+}
+footer code {
+  font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--ink-2);
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Cosmic Beacon &middot; Instrument Record</p>
+  <h1>Mast Log,<br>Black&nbsp;Rock&nbsp;City</h1>
+  <p class="standfirst">
+    Nine days of wind, position and temperature recorded at one reading a second
+    from a Gill anemometer and a u-blox receiver on the beacon's mast, 30&nbsp;August
+    to 5&nbsp;September&nbsp;2026 &mdash; read back out of the sculpture's own
+    <code>.rec</code> logs and its journal.
+  </p>
+  <div class="coords" id="coords"></div>
+</header>
+
+<section id="overview">
+  <h2><span class="num">01</span> What the week measured</h2>
+  <p class="lede">
+    Every figure here is computed from the logs by <code>report/build.py</code>; none
+    is typed in by hand. Speeds are metres per second, with miles per hour beside
+    them where a number is worth feeling rather than reading.
+  </p>
+  <div class="stats" id="stats"></div>
+  <div class="caveat" id="coverage-note"></div>
+</section>
+
+<section id="wind">
+  <h2><span class="num">02</span> Wind</h2>
+  <p class="lede">
+    The anemometer wrote 648,392 readings, every one of them with a clean status
+    byte &mdash; not a single fault frame all week. The mast sat through two distinct
+    weathers: a still opening weekend, then three days that blew hard from Tuesday
+    to Thursday.
+  </p>
+
+  <div class="controls" role="group" aria-label="Wind chart controls">
+    <span class="label">Show</span>
+    <button class="seg" id="w-mean" aria-pressed="true">10-min mean</button>
+    <button class="seg" id="w-gust" aria-pressed="true">Gust envelope</button>
+    <span class="label" style="margin-left:10px">Units</span>
+    <button class="seg" id="w-ms" aria-pressed="true">m/s</button>
+    <button class="seg" id="w-mph" aria-pressed="false">mph</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Wind speed through the week</span>
+      <span class="legend" id="wind-legend"></span>
+    </div>
+    <figure class="chart-scroll"><div id="wind-chart"></div></figure>
+    <details>
+      <summary>Table view &mdash; daily figures</summary>
+      <div class="tablebox"><table id="wind-table"></table></div>
+    </details>
+  </div>
+
+  <div class="grid2" style="margin-top:22px">
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Where it came from</span></div>
+      <figure><div id="rose-chart"></div></figure>
+      <p class="panel-note" id="rose-note"></p>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">The daily rhythm</span></div>
+      <figure><div id="diurnal-chart"></div></figure>
+      <p class="panel-note">
+        Mean speed by hour of day, Pacific. The playa's afternoon thermal is plain:
+        calmest just after dawn, hardest through the evening.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="heading">
+  <h2><span class="num">03</span> Finding the mast's north</h2>
+  <div class="caveat" id="heading-note"></div>
+  <div class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Mast against reanalysis</span>
+      <span class="legend" id="ref-legend"></span>
+    </div>
+    <figure class="chart-scroll"><div id="ref-chart"></div></figure>
+    <p class="panel-note">
+      Hourly wind speed, the mast's own record against ERA5 for the same coordinates.
+      Speed played no part in fitting the rotation &mdash; the two agreeing here is an
+      independent check that the anemometer was watching the weather the model was.
+    </p>
+    <details>
+      <summary>Table view &mdash; hourly comparison</summary>
+      <div class="tablebox"><table id="ref-table"></table></div>
+    </details>
+  </div>
+</section>
+
+<section id="gps">
+  <h2><span class="num">04</span> Position</h2>
+  <p class="lede">
+    The receiver logged 1,013,613 fixes. It never moved &mdash; which is the point:
+    the spread of those fixes around their own median is the receiver's noise, and
+    it is a good way to say how well the sculpture knew where it was.
+  </p>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title">Fix scatter</span></div>
+      <figure><div id="scatter-chart"></div></figure>
+      <p class="panel-note" id="scatter-note"></p>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Satellites and precision</span>
+        <span class="legend" id="sat-legend"></span>
+      </div>
+      <figure><div id="sat-chart"></div></figure>
+      <p class="panel-note">
+        Satellites used in the solution, ten-minute means, against median HDOP on
+        the same axis of count. Both are counts of quality, so they share one scale.
+      </p>
+    </div>
+  </div>
+  <div class="caveat" id="gps-note"></div>
+</section>
+
+<section id="temps">
+  <h2><span class="num">05</span> Temperature</h2>
+  <p class="lede">
+    Nothing wrote temperatures to <code>/data</code>. These come from the hub's
+    journal, one flat line every five minutes, and they are board and enclosure
+    temperatures &mdash; not the air on the playa. What they answer is whether a
+    sealed box on a tower gets too hot to work, and it did not.
+  </p>
+
+  <div class="controls" role="group" aria-label="Temperature controls">
+    <span class="label">Series</span>
+    <button class="seg" id="t-pi" aria-pressed="true">Pi&nbsp;5 enclosure</button>
+    <button class="seg" id="t-beacon" aria-pressed="true">Emitter boards</button>
+    <button class="seg" id="t-cam" aria-pressed="true">Camera</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Board temperatures</span>
+      <span class="legend" id="temp-legend"></span>
+    </div>
+    <figure class="chart-scroll"><div id="temp-chart"></div></figure>
+    <details>
+      <summary>Table view &mdash; per-sensor range</summary>
+      <div class="tablebox"><table id="temp-table"></table></div>
+    </details>
+  </div>
+  <div class="caveat" id="temp-note"></div>
+</section>
+
+<footer>
+  <p id="prov"></p>
+  <p>
+    Built by <code>report/build.py</code> from <code>beacon-data-2026/</code>:
+    <code>recscan.py</code> reads the fixed-width <code>.rec</code> logs,
+    <code>journaltemps.py</code> parses the systemd journal,
+    <code>heading.py</code> recovers the anemometer's north against ERA5 reanalysis
+    (<a href="https://open-meteo.com/">Open-Meteo</a> archive).
+  </p>
+</footer>
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const SVG = "http://www.w3.org/2000/svg";
+const el = (n, a = {}) => {
+  const e = document.createElementNS(SVG, n);
+  for (const k in a) e.setAttribute(k, a[k]);
+  return e;
+};
+const MPH = 2.2369362921;
+const $ = id => document.getElementById(id);
+const PTS = ["N","NNE","NE","ENE","E","ESE","SE","SSE",
+             "S","SSW","SW","WSW","W","WNW","NW","NNW"];
+const point = d => PTS[Math.floor((((d % 360) + 371.25) % 360) / 22.5)];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Times are Pacific daylight throughout - the week happened on playa time and
+// that is the only clock a reader of this page thinks in.
+const PDT = -7 * 3600;
+const asPDT = t => new Date((t + PDT) * 1000);
+const fmtDay = t => asPDT(t).toUTCString().slice(0, 3);
+const fmtDate = t => asPDT(t).toUTCString().slice(5, 11);
+const fmtTime = t => asPDT(t).toUTCString().slice(17, 22);
+const fmtFull = t => `${fmtDay(t)} ${fmtDate(t)} ${fmtTime(t)}`;
+
+let D = null;
+
+/* ------------------------------------------------------------------ tooltip */
+const tip = $("tip");
+function showTip(ev, html) {
+  tip.innerHTML = html;
+  tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  let x = ev.clientX + 16, y = ev.clientY - r.height / 2;
+  if (x + r.width > innerWidth - 10) x = ev.clientX - r.width - 16;
+  tip.style.left = Math.max(8, x) + "px";
+  tip.style.top = Math.min(Math.max(8, y), innerHeight - r.height - 8) + "px";
+}
+const hideTip = () => { tip.style.opacity = 0; };
+
+/* --------------------------------------------------------------- chart base */
+// One helper builds every time-axis chart on this page, so the day rules, the
+// outage shading and the crosshair behave identically in all of them.
+function timeChart(host, opts) {
+  const W = 980, H = opts.height || 260;
+  const M = { t: 14, r: 14, b: 30, l: 46 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+                          "aria-label": opts.label });
+  svg.style.minWidth = "620px";
+  const g = el("g", { transform: `translate(${M.l},${M.t})` });
+  svg.appendChild(g);
+
+  const t0 = D.start, t1 = D.end;
+  const X = t => (t - t0) / (t1 - t0) * iw;
+  const Y = v => ih - (v - opts.min) / (opts.max - opts.min) * ih;
+
+  // Outages first, underneath everything: the reader should see the hole in the
+  // record as part of the plot, not as an absence they have to notice.
+  for (const o of D.coverage.wind.outages) {
+    if (o.hours < 0.5) continue;
+    g.appendChild(el("rect", {
+      x: X(o.from), y: 0, width: Math.max(1, X(o.to) - X(o.from)), height: ih,
+      fill: css("--sunk"), stroke: css("--rule"), "stroke-width": 1
+    }));
+  }
+
+  // Gridlines and y ticks.
+  for (const v of opts.ticks) {
+    g.appendChild(el("line", { x1: 0, x2: iw, y1: Y(v), y2: Y(v),
+                               stroke: css("--rule"), "stroke-width": 1 }));
+    const lab = el("text", { x: -9, y: Y(v) + 4, "text-anchor": "end",
+                             fill: css("--ink-3"), "font-size": 11,
+                             "font-family": "JetBrains Mono, monospace" });
+    lab.textContent = opts.tickLabel ? opts.tickLabel(v) : v;
+    g.appendChild(lab);
+  }
+
+  // Midnight rules and day labels.
+  for (let t = t0; t < t1; t += 86400) {
+    g.appendChild(el("line", { x1: X(t), x2: X(t), y1: 0, y2: ih,
+                               stroke: css("--hair"), "stroke-width": 1 }));
+    const lab = el("text", { x: X(t) + 7, y: ih + 19, fill: css("--ink-3"),
+                             "font-size": 11.5,
+                             "font-family": "Barlow Condensed, sans-serif",
+                             "letter-spacing": ".08em" });
+    lab.textContent = `${fmtDay(t).toUpperCase()} ${fmtDate(t).split(" ")[0]}`;
+    g.appendChild(lab);
+  }
+  g.appendChild(el("line", { x1: 0, x2: iw, y1: ih, y2: ih,
+                             stroke: css("--hair"), "stroke-width": 1 }));
+
+  const plot = el("g");
+  g.appendChild(plot);
+
+  // Crosshair + nearest-point hover across the whole plot area.
+  const cross = el("line", { y1: 0, y2: ih, stroke: css("--ink-3"),
+                             "stroke-width": 1, opacity: 0 });
+  g.appendChild(cross);
+  const hit = el("rect", { x: 0, y: 0, width: iw, height: ih, fill: "transparent" });
+  hit.style.cursor = "crosshair";
+  g.appendChild(hit);
+  hit.addEventListener("pointermove", ev => {
+    const box = svg.getBoundingClientRect();
+    const px = (ev.clientX - box.left) / box.width * W - M.l;
+    const t = t0 + px / iw * (t1 - t0);
+    const found = opts.onHover(t);
+    if (!found) { cross.setAttribute("opacity", 0); hideTip(); return; }
+    cross.setAttribute("x1", X(found.t));
+    cross.setAttribute("x2", X(found.t));
+    cross.setAttribute("opacity", 1);
+    showTip(ev, found.html);
+  });
+  hit.addEventListener("pointerleave", () => {
+    cross.setAttribute("opacity", 0); hideTip();
+  });
+
+  host.replaceChildren(svg);
+  return { g: plot, X, Y, iw, ih, svg };
+}
+
+// Break a series wherever the record does, so a line never draws straight across
+// an outage and invents weather that was not recorded.
+function segments(rows, gap) {
+  const out = [];
+  let run = [];
+  for (const r of rows) {
+    if (run.length && r.t - run[run.length - 1].t > gap) { out.push(run); run = []; }
+    run.push(r);
+  }
+  if (run.length) out.push(run);
+  return out;
+}
+
+/* -------------------------------------------------------------------- wind */
+const wState = { mean: true, gust: true, mph: false };
+
+function drawWind() {
+  const host = $("wind-chart");
+  const k = wState.mph ? MPH : 1;
+  const top = wState.mph ? 45 : 20;
+  const ticks = wState.mph ? [0, 10, 20, 30, 40] : [0, 5, 10, 15, 20];
+  const rows = D.wind;
+
+  const c = timeChart(host, {
+    height: 300, min: 0, max: top, ticks,
+    label: "Wind speed through the event week",
+    tickLabel: v => v,
+    onHover: t => {
+      let best = null, bd = Infinity;
+      for (const r of rows) {
+        const d = Math.abs(r.t - t);
+        if (d < bd) { bd = d; best = r; }
+      }
+      if (!best || bd > 5400) return null;
+      const u = wState.mph ? "mph" : "m/s";
+      const dir = best.true != null ? best.true : best.dir;
+      return { t: best.t, html:
+        `<div class="when">${fmtFull(best.t)}</div>
+         <div class="row"><i><span class="swatch" style="background:${css("--s1")}"></span>Mean</i><b>${(best.mean * k).toFixed(1)} ${u}</b></div>
+         <div class="row"><i><span class="swatch area" style="background:${css("--band")}"></span>Gust</i><b>${(best.max * k).toFixed(1)} ${u}</b></div>
+         <div class="row"><i>Lull</i><b>${(best.min * k).toFixed(1)} ${u}</b></div>
+         <div class="row"><i>From</i><b>${dir == null ? "&mdash;" : point(dir) + " " + Math.round(dir) + "&deg;"}</b></div>` };
+    }
+  });
+
+  for (const seg of segments(rows, 1800)) {
+    if (wState.gust) {
+      // The envelope is min-to-max: a mean line alone would erase every gust,
+      // which is the one thing an anemometer on a mast is for.
+      let d = "";
+      seg.forEach((r, i) => { d += (i ? "L" : "M") + c.X(r.t) + " " + c.Y(r.max * k); });
+      for (let i = seg.length - 1; i >= 0; i--)
+        d += "L" + c.X(seg[i].t) + " " + c.Y(seg[i].min * k);
+      c.g.appendChild(el("path", { d: d + "Z", fill: css("--band"), stroke: "none" }));
+    }
+    if (wState.mean) {
+      let d = "";
+      seg.forEach((r, i) => { d += (i ? "L" : "M") + c.X(r.t) + " " + c.Y(r.mean * k); });
+      c.g.appendChild(el("path", { d, fill: "none", stroke: css("--s1"),
+                                   "stroke-width": 2, "stroke-linejoin": "round" }));
+    }
+  }
+
+  // Direct-label the peak: the extreme is the one point worth naming on the plot.
+  const pk = D.summary.wind.gust;
+  const px = c.X(pk.t), py = c.Y(pk.speed * k);
+  c.g.appendChild(el("circle", { cx: px, cy: py, r: 4, fill: css("--s2"),
+                                 stroke: css("--surface"), "stroke-width": 2 }));
+  const lab = el("text", { x: px - 10, y: py - 9, "text-anchor": "end",
+                           fill: css("--ink"), "font-size": 12.5, "font-weight": 600,
+                           "font-family": "Barlow Condensed, sans-serif",
+                           "letter-spacing": ".04em" });
+  lab.textContent = `PEAK ${(pk.speed * k).toFixed(1)} ${wState.mph ? "MPH" : "M/S"}`;
+  c.g.appendChild(lab);
+
+  $("wind-legend").innerHTML =
+    `<span><span class="swatch" style="background:${css("--s1")}"></span>10-minute mean</span>
+     <span><span class="swatch area" style="background:${css("--band")}"></span>Gust to lull</span>
+     <span><span class="swatch" style="background:${css("--s2")};height:9px;width:9px;border-radius:9px"></span>Week's peak</span>
+     <span><span class="swatch area" style="background:${css("--sunk")};border:1px solid ${css("--rule")}"></span>Not recorded</span>`;
+}
+
+function windTable() {
+  const k = wState.mph ? MPH : 1, u = wState.mph ? "mph" : "m/s";
+  let h = `<thead><tr><th>Day</th><th>Mean ${u}</th><th>Peak ${u}</th>
+           <th>10-min bins</th><th>Coverage</th></tr></thead><tbody>`;
+  for (const d of D.summary.wind.daily) {
+    const t = Date.parse(d.day + "T00:00:00Z") / 1000 - PDT;
+    h += `<tr><td>${fmtDay(t)} ${fmtDate(t)}</td>
+          <td>${(d.mean * k).toFixed(2)}</td><td>${(d.peak * k).toFixed(2)}</td>
+          <td>${d.bins}</td><td>${Math.round(d.bins / 144 * 100)}%</td></tr>`;
+  }
+  $("wind-table").innerHTML = h + "</tbody>";
+}
+
+/* -------------------------------------------------------------------- rose */
+function drawRose() {
+  const S = 300, cx = S / 2, cy = S / 2 + 6, R = 108;
+  const svg = el("svg", { viewBox: `0 0 ${S} ${S + 16}`, role: "img",
+                          "aria-label": "Wind rose" });
+  const rose = D.summary.wind.rose;
+  const most = Math.max(...rose);
+
+  for (const f of [0.5, 1]) {
+    svg.appendChild(el("circle", { cx, cy, r: R * f, fill: "none",
+                                   stroke: css("--rule"), "stroke-width": 1 }));
+  }
+  for (let i = 0; i < 16; i++) {
+    if (!rose[i]) continue;
+    // Compass bearings run clockwise from north, which is -90 degrees from the
+    // way atan2 measures, and each petal is centred on its own point.
+    const a0 = (i * 22.5 - 11.25 - 90) * Math.PI / 180;
+    const a1 = (i * 22.5 + 11.25 - 90) * Math.PI / 180;
+    const r = 14 + (rose[i] / most) * (R - 14);
+    const p = el("path", {
+      d: `M${cx + Math.cos(a0) * 14} ${cy + Math.sin(a0) * 14}
+          L${cx + Math.cos(a0) * r} ${cy + Math.sin(a0) * r}
+          A${r} ${r} 0 0 1 ${cx + Math.cos(a1) * r} ${cy + Math.sin(a1) * r}
+          L${cx + Math.cos(a1) * 14} ${cy + Math.sin(a1) * 14}Z`,
+      fill: css("--s1"), stroke: css("--surface"), "stroke-width": 2,
+      opacity: 0.35 + 0.65 * (rose[i] / most)
+    });
+    p.style.cursor = "pointer";
+    const share = (rose[i] / rose.reduce((a, b) => a + b, 0) * 100).toFixed(1);
+    p.addEventListener("pointermove", ev => showTip(ev,
+      `<div class="when">From ${PTS[i]}</div>
+       <div class="row"><i>Ten-minute bins</i><b>${rose[i]}</b></div>
+       <div class="row"><i>Share of week</i><b>${share}%</b></div>`));
+    p.addEventListener("pointerleave", hideTip);
+    svg.appendChild(p);
+  }
+  for (const [i, name] of [[0, "N"], [4, "E"], [8, "S"], [12, "W"]]) {
+    const a = (i * 22.5 - 90) * Math.PI / 180;
+    const tx = el("text", {
+      x: cx + Math.cos(a) * (R + 17), y: cy + Math.sin(a) * (R + 17) + 4,
+      "text-anchor": "middle", fill: css("--ink-3"), "font-size": 12.5,
+      "font-family": "Barlow Condensed, sans-serif", "letter-spacing": ".1em" });
+    tx.textContent = name;
+    svg.appendChild(tx);
+  }
+  $("rose-chart").replaceChildren(svg);
+}
+
+/* ----------------------------------------------------------------- diurnal */
+function drawDiurnal() {
+  const W = 480, H = 232, M = { t: 12, r: 12, b: 28, l: 34 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+                          "aria-label": "Mean wind speed by hour of day" });
+  const g = el("g", { transform: `translate(${M.l},${M.t})` });
+  svg.appendChild(g);
+  const hours = D.summary.wind.hourly;
+  const top = 8;
+  const Y = v => ih - v / top * ih;
+  const bw = iw / 24;
+
+  for (const v of [0, 2, 4, 6, 8]) {
+    g.appendChild(el("line", { x1: 0, x2: iw, y1: Y(v), y2: Y(v),
+                               stroke: css("--rule"), "stroke-width": 1 }));
+    const t = el("text", { x: -8, y: Y(v) + 4, "text-anchor": "end",
+                           fill: css("--ink-3"), "font-size": 10.5,
+                           "font-family": "JetBrains Mono, monospace" });
+    t.textContent = v;
+    g.appendChild(t);
+  }
+  for (let h = 0; h < 24; h++) {
+    const v = hours[h];
+    if (v == null) continue;
+    // 2px surface gap between adjacent bars, and 4px rounded data-ends.
+    const bar = el("rect", { x: h * bw + 1, y: Y(v), width: bw - 2,
+                             height: ih - Y(v), rx: 3, fill: css("--s1"),
+                             opacity: h >= 14 && h <= 21 ? 1 : 0.5 });
+    bar.style.cursor = "pointer";
+    bar.addEventListener("pointermove", ev => showTip(ev,
+      `<div class="when">${String(h).padStart(2, "0")}:00 &ndash; ${String(h).padStart(2, "0")}:59 PDT</div>
+       <div class="row"><i>Mean wind</i><b>${v.toFixed(2)} m/s</b></div>
+       <div class="row"><i></i><b>${(v * MPH).toFixed(1)} mph</b></div>`));
+    bar.addEventListener("pointerleave", hideTip);
+    g.appendChild(bar);
+  }
+  for (const h of [0, 6, 12, 18]) {
+    const t = el("text", { x: h * bw + bw / 2, y: ih + 18, "text-anchor": "middle",
+                           fill: css("--ink-3"), "font-size": 11,
+                           "font-family": "Barlow Condensed, sans-serif" });
+    t.textContent = String(h).padStart(2, "0") + ":00";
+    g.appendChild(t);
+  }
+  g.appendChild(el("line", { x1: 0, x2: iw, y1: ih, y2: ih,
+                             stroke: css("--hair"), "stroke-width": 1 }));
+  const note = el("text", { x: iw, y: 10, "text-anchor": "end", fill: css("--ink-2"),
+                            "font-size": 11.5,
+                            "font-family": "Barlow Condensed, sans-serif",
+                            "letter-spacing": ".06em" });
+  note.textContent = "M/S · AFTERNOON AND EVENING EMPHASISED";
+  g.appendChild(note);
+  $("diurnal-chart").replaceChildren(svg);
+}
+
+/* ------------------------------------------------------- mast vs reanalysis */
+function drawRef() {
+  const rows = D.reference;
+  if (!rows.length) return;
+  const c = timeChart($("ref-chart"), {
+    height: 240, min: 0, max: 14, ticks: [0, 4, 8, 12],
+    label: "Mast wind speed against ERA5 reanalysis",
+    onHover: t => {
+      let best = null, bd = Infinity;
+      for (const r of rows) {
+        const d = Math.abs(r.t - t);
+        if (d < bd) { bd = d; best = r; }
+      }
+      if (!best || bd > 5400) return null;
+      const off = D.heading ? D.heading.offset : 0;
+      const ours = best.ours_dir == null ? null : (best.ours_dir + off) % 360;
+      return { t: best.t, html:
+        `<div class="when">${fmtFull(best.t)}</div>
+         <div class="row"><i><span class="swatch" style="background:${css("--s1")}"></span>Mast</i><b>${best.ours_mps.toFixed(1)} m/s</b></div>
+         <div class="row"><i><span class="swatch" style="background:${css("--s2")}"></span>ERA5</i><b>${best.ref_mps.toFixed(1)} m/s</b></div>
+         <div class="row"><i>Mast from</i><b>${ours == null ? "&mdash;" : point(ours) + " " + Math.round(ours) + "&deg;"}</b></div>
+         <div class="row"><i>ERA5 from</i><b>${point(best.ref_dir)} ${Math.round(best.ref_dir)}&deg;</b></div>` };
+    }
+  });
+  for (const [key, colour] of [["ours_mps", css("--s1")], ["ref_mps", css("--s2")]]) {
+    for (const seg of segments(rows, 7200)) {
+      let d = "";
+      seg.forEach((r, i) => { d += (i ? "L" : "M") + c.X(r.t) + " " + c.Y(r[key]); });
+      c.g.appendChild(el("path", { d, fill: "none", stroke: colour,
+                                   "stroke-width": 2, "stroke-linejoin": "round" }));
+    }
+  }
+  $("ref-legend").innerHTML =
+    `<span><span class="swatch" style="background:${css("--s1")}"></span>Mast anemometer</span>
+     <span><span class="swatch" style="background:${css("--s2")}"></span>ERA5 reanalysis, 10&thinsp;m</span>`;
+
+  let h = `<thead><tr><th>Hour (PDT)</th><th>Mast m/s</th><th>ERA5 m/s</th>
+           <th>Mast from</th><th>ERA5 from</th></tr></thead><tbody>`;
+  const off = D.heading ? D.heading.offset : 0;
+  for (const r of rows) {
+    const ours = r.ours_dir == null ? null : (r.ours_dir + off) % 360;
+    h += `<tr><td>${fmtFull(r.t)}</td><td>${r.ours_mps.toFixed(2)}</td>
+          <td>${r.ref_mps.toFixed(2)}</td>
+          <td>${ours == null ? "&mdash;" : point(ours) + " " + Math.round(ours) + "°"}</td>
+          <td>${point(r.ref_dir)} ${Math.round(r.ref_dir)}°</td></tr>`;
+  }
+  $("ref-table").innerHTML = h + "</tbody>";
+}
+
+/* --------------------------------------------------------------- gps plots */
+function drawScatter() {
+  const S = 300, pad = 34, R = (S - pad * 2) / 2, cx = S / 2, cy = S / 2;
+  const svg = el("svg", { viewBox: `0 0 ${S} ${S}`, role: "img",
+                          "aria-label": "GPS fix scatter about the median position" });
+  const g = D.summary.gps;
+  const span = 2.5;                     // metres shown from centre to edge
+  const m2px = m => m / span * R;
+
+  for (const ring of [0.5, 1, 2]) {
+    svg.appendChild(el("circle", { cx, cy, r: m2px(ring), fill: "none",
+                                   stroke: css("--rule"), "stroke-width": 1 }));
+    const t = el("text", { x: cx + 3, y: cy - m2px(ring) - 3, fill: css("--ink-3"),
+                           "font-size": 10,
+                           "font-family": "JetBrains Mono, monospace" });
+    t.textContent = ring + " m";
+    svg.appendChild(t);
+  }
+
+  const mlat = g.lat, mlon = g.lon;
+  const cos = Math.cos(mlat * Math.PI / 180);
+  for (const b of D.gps) {
+    if (b.lat == null) continue;
+    const dx = (b.lon - mlon) * 111320 * cos, dy = (b.lat - mlat) * 111320;
+    const px = cx + m2px(dx), py = cy - m2px(dy);
+    if (Math.hypot(px - cx, py - cy) > R) continue;
+    const dot = el("circle", { cx: px, cy: py, r: 2.6, fill: css("--s1"),
+                               opacity: 0.32 });
+    dot.style.cursor = "pointer";
+    dot.addEventListener("pointermove", ev => showTip(ev,
+      `<div class="when">${fmtFull(b.t)}</div>
+       <div class="row"><i>Offset</i><b>${Math.hypot(dx, dy).toFixed(2)} m</b></div>
+       <div class="row"><i>Satellites</i><b>${b.sats} of ${b.seen}</b></div>
+       <div class="row"><i>HDOP</i><b>${b.hdop ?? "—"}</b></div>
+       <div class="row"><i>3D fix</i><b>${b.fix3}%</b></div>`));
+    dot.addEventListener("pointerleave", hideTip);
+    svg.appendChild(dot);
+  }
+  svg.appendChild(el("circle", { cx, cy, r: 3.6, fill: css("--s2"),
+                                 stroke: css("--surface"), "stroke-width": 2 }));
+  $("scatter-chart").replaceChildren(svg);
+}
+
+function drawSats() {
+  const W = 480, H = 232, M = { t: 12, r: 12, b: 28, l: 34 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+                          "aria-label": "Satellites used and horizontal dilution" });
+  const g = el("g", { transform: `translate(${M.l},${M.t})` });
+  svg.appendChild(g);
+  const rows = D.gps, top = 40;
+  const X = t => (t - D.start) / (D.end - D.start) * iw;
+  const Y = v => ih - v / top * ih;
+
+  for (const o of D.coverage.gps.outages) {
+    if (o.hours < 0.5) continue;
+    g.appendChild(el("rect", { x: X(o.from), y: 0,
+                               width: Math.max(1, X(o.to) - X(o.from)), height: ih,
+                               fill: css("--sunk"), stroke: css("--rule"),
+                               "stroke-width": 1 }));
+  }
+  for (const v of [0, 10, 20, 30, 40]) {
+    g.appendChild(el("line", { x1: 0, x2: iw, y1: Y(v), y2: Y(v),
+                               stroke: css("--rule"), "stroke-width": 1 }));
+    const t = el("text", { x: -8, y: Y(v) + 4, "text-anchor": "end",
+                           fill: css("--ink-3"), "font-size": 10.5,
+                           "font-family": "JetBrains Mono, monospace" });
+    t.textContent = v;
+    g.appendChild(t);
+  }
+  // HDOP is a count-like quality number in the same 0-40 space once scaled by
+  // ten; it is drawn on the same axis rather than a second one, and the legend
+  // says the multiplier.
+  for (const [key, colour, mul] of [["seen", css("--s3"), 1],
+                                    ["sats", css("--s1"), 1],
+                                    ["hdop", css("--s2"), 10]]) {
+    for (const seg of segments(rows, 1800)) {
+      let d = "";
+      let started = false;
+      for (const r of seg) {
+        if (r[key] == null) continue;
+        d += (started ? "L" : "M") + X(r.t) + " " + Y(r[key] * mul);
+        started = true;
+      }
+      if (started) c_append(g, d, colour);
+    }
+  }
+  for (const t of [D.start, D.start + 3 * 86400, D.start + 6 * 86400]) {
+    const lab = el("text", { x: X(t) + 4, y: ih + 18, fill: css("--ink-3"),
+                             "font-size": 11,
+                             "font-family": "Barlow Condensed, sans-serif" });
+    lab.textContent = `${fmtDay(t).toUpperCase()} ${fmtDate(t).split(" ")[0]}`;
+    g.appendChild(lab);
+  }
+  g.appendChild(el("line", { x1: 0, x2: iw, y1: ih, y2: ih,
+                             stroke: css("--hair"), "stroke-width": 1 }));
+  $("sat-chart").replaceChildren(svg);
+  $("sat-legend").innerHTML =
+    `<span><span class="swatch" style="background:${css("--s3")}"></span>Visible</span>
+     <span><span class="swatch" style="background:${css("--s1")}"></span>Used in fix</span>
+     <span><span class="swatch" style="background:${css("--s2")}"></span>HDOP &times;10</span>`;
+}
+// A function declaration, not a const arrow: drawSats above calls this during
+// boot, and a const would still be in its temporal dead zone at that point.
+function c_append(g, d, stroke) {
+  g.appendChild(el("path", { d, fill: "none", stroke, "stroke-width": 2,
+                             "stroke-linejoin": "round" }));
+}
+
+/* ------------------------------------------------------------------- temps */
+const tState = { pi: true, beacon: true, cam: true };
+const TEMP_SERIES = [
+  { key: "soc",         group: "pi",     label: "Pi 5 SoC",      colour: "--s1" },
+  { key: "rp1",         group: "pi",     label: "Pi 5 RP1",      colour: "--s1", faint: true },
+  { key: "nvme",        group: "pi",     label: "Pi 5 NVMe",     colour: "--s1", faint: true },
+  { key: "beacon.red",  group: "beacon", label: "Emitter boards", colour: "--s3" },
+  { key: "cam.soc",     group: "cam",    label: "Camera SoC",    colour: "--s2" }
+];
+
+function drawTemps() {
+  const rows = D.temps;
+  const c = timeChart($("temp-chart"), {
+    height: 270, min: 0, max: 55, ticks: [0, 10, 20, 30, 40, 50],
+    label: "Board temperatures through the event week",
+    tickLabel: v => v + "°",
+    onHover: t => {
+      let best = null, bd = Infinity;
+      for (const r of rows) {
+        const d = Math.abs(r.t - t);
+        if (d < bd) { bd = d; best = r; }
+      }
+      if (!best || bd > 5400) return null;
+      let html = `<div class="when">${fmtFull(best.t)}</div>`;
+      for (const s of TEMP_SERIES) {
+        if (!tState[s.group] || best[s.key] == null) continue;
+        html += `<div class="row"><i><span class="swatch" style="background:${css(s.colour)}"></span>${s.label}</i><b>${best[s.key].toFixed(1)}&deg;C</b></div>`;
+      }
+      return { t: best.t, html };
+    }
+  });
+
+  for (const s of TEMP_SERIES) {
+    if (!tState[s.group]) continue;
+    for (const seg of segments(rows.filter(r => r[s.key] != null), 1800)) {
+      let d = "";
+      seg.forEach((r, i) => { d += (i ? "L" : "M") + c.X(r.t) + " " + c.Y(r[s.key]); });
+      c.g.appendChild(el("path", { d, fill: "none", stroke: css(s.colour),
+                                   "stroke-width": s.faint ? 1.5 : 2,
+                                   opacity: s.faint ? 0.45 : 1,
+                                   "stroke-linejoin": "round" }));
+    }
+  }
+
+  // The throttle point is 80C and the axis stops at 55, so the line cannot be
+  // drawn to scale.  Say the distance in words at the top of the plot instead of
+  // drawing a rule that would have to lie about where 80 sits.
+  const head = el("text", { x: c.iw, y: 11, "text-anchor": "end",
+                            fill: css("--ink-2"), "font-size": 11.5,
+                            "font-family": "Barlow Condensed, sans-serif",
+                            "letter-spacing": ".06em" });
+  head.textContent = "THROTTLE POINT 80°C — OFF THE TOP OF THIS AXIS";
+  c.g.appendChild(head);
+
+  const parts = [];
+  if (tState.pi) parts.push(`<span><span class="swatch" style="background:${css("--s1")}"></span>Pi 5 &mdash; SoC, and RP1/NVMe faint</span>`);
+  if (tState.beacon) parts.push(`<span><span class="swatch" style="background:${css("--s3")}"></span>Emitter boards</span>`);
+  if (tState.cam) parts.push(`<span><span class="swatch" style="background:${css("--s2")}"></span>Camera SoC</span>`);
+  parts.push(`<span><span class="swatch area" style="background:${css("--sunk")};border:1px solid ${css("--rule")}"></span>Not recorded</span>`);
+  $("temp-legend").innerHTML = parts.join("");
+}
+
+function tempTable() {
+  const s = D.summary.temps.sensors;
+  let h = `<thead><tr><th>Sensor</th><th>Min &deg;C</th><th>Mean &deg;C</th>
+           <th>Max &deg;C</th><th>Samples</th></tr></thead><tbody>`;
+  for (const k of Object.keys(s)) {
+    h += `<tr><td>${k}</td><td>${s[k].min}</td><td>${s[k].mean}</td>
+          <td>${s[k].max}</td><td>${s[k].n}</td></tr>`;
+  }
+  $("temp-table").innerHTML = h + "</tbody>";
+}
+
+/* ------------------------------------------------------------------- prose */
+function fillProse() {
+  const s = D.summary, cov = D.coverage.wind, h = D.heading;
+
+  $("coords").innerHTML = `
+    <span><b>${s.gps.lat.toFixed(6)}&deg;, ${s.gps.lon.toFixed(6)}&deg;</b> &middot; median of 1,013,613 fixes</span>
+    <span><b>${s.gps.alt} m</b> &middot; ${Math.round(s.gps.alt * 3.28084)} ft AMSL</span>
+    <span><b>${Math.round(cov.fraction * 100)}%</b> of the week recorded</span>`;
+
+  const gustT = s.wind.gust.t;
+  $("stats").innerHTML = `
+    <div class="stat"><div class="k">Peak gust</div>
+      <div class="v">${s.wind.gust.speed}<small>m/s</small></div>
+      <div class="sub">${(s.wind.gust.speed * MPH).toFixed(0)} mph &middot; ${fmtDay(gustT)} ${fmtTime(gustT)}</div></div>
+    <div class="stat"><div class="k">Mean wind</div>
+      <div class="v">${s.wind.mean}<small>m/s</small></div>
+      <div class="sub">${(s.wind.mean * MPH).toFixed(1)} mph over ${D.wind.length} bins</div></div>
+    <div class="stat"><div class="k">Prevailing</div>
+      <div class="v">${point(s.wind.prevailing)}</div>
+      <div class="sub">${Math.round(s.wind.prevailing)}&deg; true &middot; steadiness ${s.wind.steadiness}</div></div>
+    <div class="stat"><div class="k">Fix quality</div>
+      <div class="v">${s.gps.fix3.toFixed(1)}<small>%</small></div>
+      <div class="sub">3D &middot; HDOP ${s.gps.hdop} &middot; ${s.gps.sats} of ${s.gps.seen} sats</div></div>
+    <div class="stat"><div class="k">Position noise</div>
+      <div class="v">${s.gps.scatter_p95}<small>m</small></div>
+      <div class="sub">95% of fixes within, of ${s.gps.scatter_max} m worst</div></div>
+    <div class="stat"><div class="k">Hottest board</div>
+      <div class="v">${s.temps.sensors["rp1"].max}<small>&deg;C</small></div>
+      <div class="sub">Pi 5 RP1 &middot; never throttled</div></div>`;
+
+  const lost = cov.outages.filter(o => o.hours >= 0.5);
+  $("coverage-note").innerHTML = `
+    <h3>What is missing, and why it matters</h3>
+    <p>The logs cover <b>${Math.round(cov.fraction * 100)}%</b> of 30&nbsp;August to
+    7&nbsp;September. Both the wind and position logs stop at exactly the same
+    instants &mdash; ${lost.length} outages, the longest
+    <b>${lost[lost.length - 1].hours} hours from ${fmtDay(lost[lost.length - 1].from)}
+    ${fmtTime(lost[lost.length - 1].from)}</b>. Because the two independent services
+    fail together, these are the beacon losing power, not a sensor faulting.</p>
+    <p>The practical consequence: <b>recording ends Saturday
+    ${fmtTime(lost[lost.length - 1].from)}, before the Man burned</b>. There is no
+    record of burn night or of Sunday. Gaps are drawn as shaded blocks on every
+    chart rather than interpolated across, so no line here invents weather that
+    was not measured.</p>`;
+
+  if (h) {
+    $("heading-note").innerHTML = `
+      <h3>The anemometer's zero was never measured</h3>
+      <p><code>CB_WIND_OFFSET_DEG</code> shipped empty, so every direction in
+      <code>/data/wind</code> is in the sensor's own frame &mdash; degrees from
+      wherever the mast happened to be clamped, which is not a bearing. Rather than
+      publish those as compass directions, the offset was recovered afterwards:
+      for each hour with real wind, compare our direction against ERA5 reanalysis
+      at the mast's own coordinates, and take the rotation that best explains all
+      ${h.hours} hours at once, weighted by the weaker of the two speeds.</p>
+      <p>That gives <b>${h.offset}&deg; &plusmn; ${h.sd}&deg;</b>
+      (agreement R&nbsp;=&nbsp;${h.R}). The estimate holds steady between
+      244.1&deg; and 244.8&deg; whether the gate is 1&nbsp;m/s or 6&nbsp;m/s, and
+      the two halves of the week agree to six degrees independently. Corrected,
+      the prevailing wind is <b>${point(s.wind.prevailing)} at
+      ${Math.round(s.wind.prevailing)}&deg;</b> &mdash; which matches the
+      reanalysis's own WSW for the same week.</p>
+      <p>Treat it as good to about five or ten degrees: enough to say the wind came
+      out of the south-west, not enough to survey anything. The real fix is one
+      compass measurement at the mast, and then the number goes in the unit file
+      where it belonged all along.</p>`;
+  }
+
+  $("rose-note").innerHTML =
+    `Ten-minute bins by compass point, rotated by the recovered
+     ${h ? h.offset + "&deg;" : "offset"} into true bearings. Steadiness
+     ${s.wind.steadiness} &mdash; the wind held one quarter about half the time,
+     and the second lobe out of the north-east is the morning reversal.`;
+
+  $("scatter-note").innerHTML =
+    `Ten-minute median fixes against the week's median position. Half fall within
+     <b>${s.gps.scatter_p50} m</b>, 95% within <b>${s.gps.scatter_p95} m</b>,
+     none beyond ${s.gps.scatter_max} m. The receiver never moved; this is its
+     own noise.`;
+
+  $("gps-note").innerHTML = `
+    <h3>On the position log</h3>
+    <p>The receiver held a 3D fix for <b>${s.gps.fix3.toFixed(2)}%</b> of epochs,
+    typically with <b>${s.gps.sats} satellites</b> of ${s.gps.seen} visible and an
+    HDOP of ${s.gps.hdop}. Reported altitude wandered between ${s.gps.alt_min} and
+    ${s.gps.alt_max}&nbsp;m against a true playa elevation near
+    ${s.gps.alt} m &mdash; a ${(s.gps.alt_max - s.gps.alt_min).toFixed(1)} m spread,
+    which is the ordinary vertical-versus-horizontal story: every satellite is above
+    the receiver and none below, so height is always the weaker number.</p>
+    <p>These records are the 60-byte format, which carries only HDOP.
+    ${s.gps.has_pdop ? "" : "No VDOP or PDOP was recorded during this week"} &mdash;
+    the three-dilution record landed in a later firmware, and the 10,653 records
+    written in that format all predate the event.</p>`;
+
+  const t = s.temps;
+  $("temp-note").innerHTML = `
+    <h3>The box stayed cool</h3>
+    <p>The hottest thing on the tower all week was the Pi&nbsp;5's RP1 at
+    <b>${t.sensors["rp1"].max}&deg;C</b>, against a throttle point of 80&deg;C and a
+    critical limit above that. ${t.fan_on === 0
+      ? `The fan never left step&nbsp;0 across all ${D.temps.length} samples`
+      : `The fan rose above step&nbsp;0 in ${t.fan_on} of ${D.temps.length} samples`},
+    and there was <b>not one under-voltage flag</b>. Emitter boards ran
+    ${t.sensors["beacon.red"].min}&ndash;${t.sensors["beacon.red"].max}&deg;C, tracking
+    the night-to-afternoon swing of the air around them.</p>
+    <p>The Eclipse sculpture answered <b>${t.eclipse === 0 ? "never" : t.eclipse + " times"}</b>
+    &mdash; it reads <code>unreachable</code> in every line of the journal for this
+    week, so there is no thermal record of it at all. That is a network fact, not a
+    temperature.</p>`;
+
+  const gen = new Date(D.generated);
+  $("prov").innerHTML =
+    `${D.wind.length} ten-minute wind bins from 648,392 anemometer readings;
+     ${D.gps.length} bins from 1,013,613 GNSS fixes; ${D.temps.length} temperature
+     samples from the hub journal. Generated ${gen.toISOString().slice(0, 16).replace("T", " ")}&nbsp;UTC.`;
+}
+
+/* ------------------------------------------------------------------ wiring */
+function toggle(id, onClick) {
+  const b = $(id);
+  b.addEventListener("click", () => {
+    const on = b.getAttribute("aria-pressed") === "true";
+    b.setAttribute("aria-pressed", String(!on));
+    onClick(!on);
+  });
+}
+
+function boot(data) {
+  D = data;
+  fillProse();
+  drawWind(); windTable();
+  drawRose(); drawDiurnal();
+  drawRef();
+  drawScatter(); drawSats();
+  drawTemps(); tempTable();
+
+  toggle("w-mean", v => { wState.mean = v; drawWind(); });
+  toggle("w-gust", v => { wState.gust = v; drawWind(); });
+  $("w-ms").addEventListener("click", () => {
+    wState.mph = false;
+    $("w-ms").setAttribute("aria-pressed", "true");
+    $("w-mph").setAttribute("aria-pressed", "false");
+    drawWind(); windTable();
+  });
+  $("w-mph").addEventListener("click", () => {
+    wState.mph = true;
+    $("w-ms").setAttribute("aria-pressed", "false");
+    $("w-mph").setAttribute("aria-pressed", "true");
+    drawWind(); windTable();
+  });
+  toggle("t-pi", v => { tState.pi = v; drawTemps(); });
+  toggle("t-beacon", v => { tState.beacon = v; drawTemps(); });
+  toggle("t-cam", v => { tState.cam = v; drawTemps(); });
+
+  // The theme swaps token values, and the charts read them at draw time.
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    drawWind(); drawRose(); drawDiurnal(); drawRef();
+    drawScatter(); drawSats(); drawTemps();
+  });
+}
+
+// The week's data is inlined below by build.py, between the two markers, so this
+// file is the whole report - copy it to a static host and nothing else has to go
+// with it.  Editing index.html by hand is safe; build.py only ever replaces what
+// is between the markers.
+const INLINE = /*DATA:START*/null/*DATA:END*/;
+
+if (INLINE) {
+  boot(INLINE);
+} else {
+  // Only reached in the source file before build.py has run.
+  fetch("data.json").then(r => r.json()).then(boot).catch(err => {
+    document.querySelector(".wrap").insertAdjacentHTML("beforeend",
+      `<div class="caveat"><h3>No data in this file</h3>
+       <p>${err}. Run <code>python3 report/build.py</code>, which writes the
+       finished single-file report to <code>report/mast-log.html</code>.</p></div>`);
+  });
+}
+</script>
