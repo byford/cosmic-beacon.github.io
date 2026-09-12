@@ -190,28 +190,55 @@ dialog#box::backdrop { background: var(--scrim); }
 }
 /* The readout sits over the media, bottom-left, where a burned-in timecode
    would go on a camera - and it is the wind at the instant on screen. */
+/* Fixed geometry throughout.  Every number in here is monospaced and every
+   row has a reserved size, because this panel updates about forty times a
+   second over a playing video: anything whose width depends on its content
+   makes the whole box breathe as the digits change. */
 .readout {
   position: absolute; left: 26px; bottom: 14px;
   background: rgba(8,8,7,.72); border: 1px solid rgba(255,255,255,.18);
-  padding: 10px 13px; border-radius: 3px; backdrop-filter: blur(6px);
-  display: grid; gap: 5px; min-width: 190px; pointer-events: none;
+  padding: 12px 14px; border-radius: 3px; backdrop-filter: blur(6px);
+  display: grid; grid-template-columns: 44px 1fr; gap: 4px 12px;
+  align-items: center; pointer-events: none;
+  width: 234px; min-height: 92px;
 }
 .readout .r-when {
-  font-family: "JetBrains Mono", monospace; font-size: 12px; color: #d8d4c8;
-  font-variant-numeric: tabular-nums; letter-spacing: .01em;
+  grid-column: 1 / -1;
+  font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: #d8d4c8;
+  font-variant-numeric: tabular-nums; letter-spacing: -.01em; white-space: nowrap;
 }
-.readout .r-main { display: flex; align-items: center; gap: 11px; }
+.readout .r-dial { grid-row: span 2; width: 44px; height: 44px; }
 .readout .r-speed {
-  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 32px;
-  font-weight: 600; line-height: 1;
+  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 34px;
+  font-weight: 600; line-height: .95; font-variant-numeric: tabular-nums;
+  align-self: end;
 }
-.readout .r-speed small { font-size: 14px; font-weight: 500; color: #d8d4c8; margin-left: 3px; }
+.readout .r-speed small {
+  font-size: 13px; font-weight: 500; color: #d8d4c8; margin-left: 4px;
+  font-variant-numeric: normal;
+}
 .readout .r-dir {
-  font-family: "Barlow Condensed", system-ui, sans-serif; font-size: 13px;
-  letter-spacing: .08em; text-transform: uppercase; color: #d8d4c8;
+  font-family: "JetBrains Mono", monospace; font-size: 11px;
+  letter-spacing: .02em; color: #d8d4c8; white-space: nowrap; align-self: start;
 }
-.readout .r-none { font-size: 12.5px; color: #b4afa2; max-width: 22ch; line-height: 1.45; }
-.arrow { flex: none; }
+.readout .r-none {
+  grid-column: 1 / -1; font-size: 12.5px; color: #b4afa2;
+  line-height: 1.45; align-self: center;
+}
+/* Shown for a beat when the clip jumps time - these lapses are stitched from
+   separate nights, so a cut can span a day and a half.  Reserved space in the
+   grid, so appearing does not move anything. */
+.readout .r-skip {
+  grid-column: 1 / -1; font-size: 10.5px; letter-spacing: .06em;
+  text-transform: uppercase; color: #f0b080; min-height: 13px;
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  opacity: 0; transition: opacity .25s;
+}
+.readout .r-skip[data-on="1"] { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .readout .r-skip { transition: none; } }
+/* The needle turns; nothing else in the dial moves. */
+.readout .r-needle { transition: transform .28s cubic-bezier(.22,.61,.36,1); }
+@media (prefers-reduced-motion: reduce) { .readout .r-needle { transition: none; } }
 
 .box-foot {
   display: flex; justify-content: space-between; align-items: flex-start;
@@ -363,7 +390,7 @@ function indexWind(data) {
   for (const b of data.wind) m.set(b.t, b);
   return m;
 }
-const windAt = t => WIND.get(Math.floor(t / 600) * 600) || null;
+const windAt = t => WIND.get(Math.floor(t / D.bin) * D.bin) || null;
 
 /* ------------------------------------------------------------- timeline */
 function drawTimeline() {
@@ -525,52 +552,163 @@ function drawGrid() {
 }
 
 /* ------------------------------------------------------------- readout */
-// An arrow that points the way the wind was going, with the bearing it came
-// from written beside it.  Drawn rather than written because a direction is a
-// direction; the text is there so it is never colour-and-angle alone.
-function arrow(deg) {
-  const s = el("svg", { width: 34, height: 34, viewBox: "0 0 34 34",
-                        class: "arrow", role: "img",
-                        "aria-label": `wind from ${Math.round(deg)} degrees` });
-  s.appendChild(el("circle", { cx: 17, cy: 17, r: 15.5, fill: "none",
-    stroke: "rgba(255,255,255,.28)", "stroke-width": 1 }));
-  const g = el("g", { transform: `rotate(${(deg + 180) % 360} 17 17)` });
-  g.appendChild(el("path", { d: "M17 4 L17 27", stroke: "#fff", "stroke-width": 2,
-    "stroke-linecap": "round" }));
-  g.appendChild(el("path", { d: "M11.5 21 L17 27 L22.5 21", fill: "none",
-    stroke: "#fff", "stroke-width": 2, "stroke-linecap": "round",
-    "stroke-linejoin": "round" }));
-  s.appendChild(g);
-  return s;
-}
-
-function readout(t) {
+// A compass dial whose needle turns, over a fixed-size panel.  Built once and
+// then mutated in place: rebuilding this node every animation frame - which is
+// what an earlier version did - relaid out the whole box forty times a second
+// and made the numbers jitter.
+function makeReadout() {
   const box = document.createElement("div");
   box.className = "readout";
-  const w = windAt(t);
+
   const when = document.createElement("div");
   when.className = "r-when";
-  when.textContent = fmtFull(t);
   box.appendChild(when);
 
-  if (!w) {
-    const none = document.createElement("div");
-    none.className = "r-none";
-    none.textContent = "No wind recorded at this moment — the beacon was not logging.";
-    box.appendChild(none);
-    return box;
+  const dial = el("svg", { class: "r-dial", viewBox: "0 0 44 44",
+                           role: "img", "aria-label": "wind direction" });
+  // The face: a ring and four ticks, drawn once and never touched again, so
+  // north stays put while the needle moves against it.
+  dial.appendChild(el("circle", { cx: 22, cy: 22, r: 19, fill: "rgba(255,255,255,.05)",
+    stroke: "rgba(255,255,255,.25)", "stroke-width": 1 }));
+  for (let a = 0; a < 360; a += 90) {
+    const rad = (a - 90) * Math.PI / 180;
+    const long = a === 0;
+    dial.appendChild(el("line", {
+      x1: 22 + Math.cos(rad) * (long ? 13.5 : 16),
+      y1: 22 + Math.sin(rad) * (long ? 13.5 : 16),
+      x2: 22 + Math.cos(rad) * 18.5,
+      y2: 22 + Math.sin(rad) * 18.5,
+      stroke: long ? "rgba(255,255,255,.75)" : "rgba(255,255,255,.3)",
+      "stroke-width": long ? 1.5 : 1, "stroke-linecap": "round" }));
   }
-  const main = document.createElement("div");
-  main.className = "r-main";
-  if (w.true != null) main.appendChild(arrow(w.true));
-  const nums = document.createElement("div");
-  nums.innerHTML =
-    `<div class="r-speed">${w.mean.toFixed(1)}<small>m/s</small></div>
-     <div class="r-dir">${w.true != null ? "from " + point(w.true) + " " + Math.round(w.true) + "°"
-       : "direction unrecorded"} · gust ${w.max.toFixed(1)}</div>`;
-  main.appendChild(nums);
-  box.appendChild(main);
+  // The needle points the way the wind is going, with its tail at the bearing
+  // it came from - one shape, so the whole thing rotates as a unit.
+  const needle = el("g", { class: "r-needle" });
+  needle.appendChild(el("path", { d: "M22 9 L26.4 20 L22 17.6 L17.6 20 Z",
+    fill: "#fff" }));
+  needle.appendChild(el("path", { d: "M22 17.6 L22 33",
+    stroke: "rgba(255,255,255,.55)", "stroke-width": 1.5,
+    "stroke-linecap": "round" }));
+  dial.appendChild(needle);
+  box.appendChild(dial);
+
+  const speed = document.createElement("div");
+  speed.className = "r-speed";
+  box.appendChild(speed);
+
+  const dir = document.createElement("div");
+  dir.className = "r-dir";
+  box.appendChild(dir);
+
+  const none = document.createElement("div");
+  none.className = "r-none";
+  none.hidden = true;
+  box.appendChild(none);
+
+  const skip = document.createElement("div");
+  skip.className = "r-skip";
+  box.appendChild(skip);
+
+  // Rotation is tracked as an unbounded angle rather than read back off the
+  // needle, so that 350 -> 10 degrees turns twenty degrees clockwise instead of
+  // spinning 340 the other way.  The wind crosses that wrap twenty-five times
+  // in this week's record, so it is not a corner case.
+  box._turn = null;
+  box._parts = { when, dial, needle, speed, dir, none, skip };
   return box;
+}
+
+function nearestTurn(previous, target) {
+  if (previous === null) return target;
+  let delta = ((target - previous) % 360 + 540) % 360 - 180;
+  return previous + delta;
+}
+
+function setReadout(box, t, wind, skipped) {
+  const p = box._parts;
+  p.when.textContent = fmtFull(t);
+
+  // `skipped` is the wall-clock gap the clip just jumped, in seconds.  Anything
+  // past a few minutes is a cut between nights rather than a lapse of the same
+  // scene, and the readout changing hard across it is the data being honest.
+  if (skipped > 900) {
+    const hours = skipped / 3600;
+    p.skip.textContent = hours >= 1
+      ? `skips ${hours.toFixed(hours < 10 ? 1 : 0)} h`
+      : `skips ${Math.round(skipped / 60)} min`;
+    p.skip.dataset.on = "1";
+  } else {
+    p.skip.dataset.on = "0";
+  }
+
+  if (!wind) {
+    p.none.hidden = false;
+    p.none.textContent = "No wind recorded here — the beacon was not logging.";
+    p.dial.style.visibility = "hidden";
+    p.speed.textContent = "";
+    p.dir.textContent = "";
+    return;
+  }
+  p.none.hidden = true;
+  p.dial.style.visibility = wind.dir == null ? "hidden" : "visible";
+
+  // toFixed(1) with tabular figures keeps the number the same width as it
+  // changes, which is the other half of the panel not breathing.
+  p.speed.innerHTML = `${wind.mean.toFixed(1)}<small>m/s</small>`;
+  p.dir.textContent = wind.dir == null
+    ? `gust ${wind.max.toFixed(1)} · dir n/a`
+    : `${point(wind.dir).padEnd(3)} ${String(Math.round(wind.dir)).padStart(3)}° · `
+      + `gust ${wind.max.toFixed(1)}`;
+
+  if (wind.dir != null) {
+    box._turn = nearestTurn(box._turn, (wind.dir + 180) % 360);
+    p.needle.setAttribute("transform", `rotate(${box._turn.toFixed(1)} 22 22)`);
+    p.dial.setAttribute("aria-label",
+      `wind from ${point(wind.dir)}, ${Math.round(wind.dir)} degrees`);
+  }
+}
+
+/* Wind between the ten-minute bins.
+ *
+ * A time-lapse crosses a bin boundary about every 0.4s of playback, and the
+ * steps across one reach 3.9 m/s and 166 degrees - so reading the containing
+ * bin and showing it raw makes the panel lurch.  This interpolates between the
+ * bins either side instead: linearly for the speeds, and along the shortest arc
+ * for the bearing, which is the only way to cross 0/360 without a spin.
+ *
+ * Only ever between adjacent bins.  Where the record has a hole - the outages
+ * run to hours - there is nothing to interpolate towards, and this returns null
+ * so the panel says so rather than inventing a ramp across the gap.
+ */
+function windNear(t) {
+  const step = D.bin;
+  const bin = Math.floor(t / step) * step;
+  const here = WIND.get(bin);
+  if (!here) return null;
+
+  // A bin's value belongs at its centre, so interpolate between the centres
+  // either side of this moment.  That makes the series continuous everywhere
+  // rather than only at the boundaries, and it reaches each bin's own value
+  // exactly at that bin's midpoint.
+  const frac = (t - bin) / step;
+  const before = frac < 0.5;
+  const towards = WIND.get(bin + (before ? -step : step));
+  if (!towards) return here;
+  // Distance from this bin's centre, as a fraction of the way to the next
+  // centre: 0 at the middle of `here`, 1 at the middle of `towards`.
+  const k = before ? 0.5 - frac : frac - 0.5;
+
+  const mix = (a, b) => a + (b - a) * k;
+  let dir = here.true;
+  if (dir != null && towards.true != null) {
+    const delta = ((towards.true - here.true) % 360 + 540) % 360 - 180;
+    dir = (here.true + delta * k + 360) % 360;
+  }
+  return {
+    mean: mix(here.mean, towards.mean),
+    max: mix(here.max, towards.max),
+    dir,
+  };
 }
 
 /* ------------------------------------------------------------ lightbox */
@@ -601,21 +739,29 @@ function open(item) {
         + 'so no wind can be matched to it.</div>';
       stage.appendChild(none);
     } else {
-      let panel = readout(item.times[0]);
+      // One panel for the life of the clip; the loop below only writes into it.
+      const panel = makeReadout();
       stage.appendChild(panel);
+      setReadout(panel, item.times[0], windNear(item.times[0]));
 
       // Playback position maps onto wall-clock time through the frame table the
       // render was made from, so the readout is the wind in the frame on screen
       // rather than an average over the clip.
+      let lastFrame = -1;
       const tick = () => {
         if (!v.isConnected) return;
+        raf = requestAnimationFrame(tick);
         const i = Math.min(item.times.length - 1,
                            Math.max(0, Math.round(v.currentTime / item.duration
                                                   * (item.frames - 1))));
-        const next = readout(item.times[i]);
-        panel.replaceWith(next);
-        panel = next;
-        raf = requestAnimationFrame(tick);
+        // The video runs at 24fps and the display at 60 or more, so most frames
+        // ask for a time that is already on screen.  Skipping those is most of
+        // what stops the panel shimmering.
+        if (i === lastFrame) return;
+        const gap = lastFrame >= 0 && i > lastFrame
+          ? item.times[i] - item.times[lastFrame] - 60 : 0;
+        lastFrame = i;
+        setReadout(panel, item.times[i], windNear(item.times[i]), gap);
       };
       raf = requestAnimationFrame(tick);
     }
@@ -626,7 +772,11 @@ function open(item) {
     stage.appendChild(img);
     // A pooled stack has no single moment, so it gets no instantaneous wind -
     // the footer says what it is instead.
-    if (!(item.days > 1)) stage.appendChild(readout(item.t));
+    if (!(item.days > 1)) {
+      const panel = makeReadout();
+      stage.appendChild(panel);
+      setReadout(panel, item.t, windNear(item.t));
+    }
   }
 
   $("box-title").textContent = item.title;

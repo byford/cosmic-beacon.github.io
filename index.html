@@ -98,10 +98,43 @@ h1 {
   color: var(--ink-3); letter-spacing: .02em;
 }
 .coords b { color: var(--ink-2); font-weight: 500; }
-.crosslink {
-  margin: 18px 0 0; font-size: 14.5px;
+/* The link through to the camera gallery.  A full-width card with real frames
+   in it rather than a line of text under the masthead, where it was missed. */
+.gallery-link {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+  gap: 22px; margin-top: 34px; padding: 20px 24px;
+  background: var(--surface); border: 1px solid var(--rule);
+  border-left: 4px solid var(--accent);
+  text-decoration: none; color: inherit; box-shadow: var(--shadow);
+}
+.gallery-link:hover { border-color: var(--ink-3); border-left-color: var(--accent); }
+.gallery-link:hover .gl-go { background: var(--accent); color: var(--surface); }
+.gl-strip { display: flex; gap: 4px; }
+.gl-strip img {
+  width: 52px; height: 70px; object-fit: cover; display: block;
+  background: var(--sunk); border-radius: 2px;
+}
+.gl-eyebrow {
   font-family: "Barlow Condensed", system-ui, sans-serif;
-  letter-spacing: .08em; text-transform: uppercase;
+  font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin: 0 0 3px;
+}
+.gl-title {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 27px; font-weight: 600; letter-spacing: .01em;
+  text-transform: uppercase; margin: 0; line-height: 1.05;
+}
+.gl-sub { margin: 5px 0 0; font-size: 14.5px; color: var(--ink-2); max-width: 54ch; }
+.gl-go {
+  font-family: "Barlow Condensed", system-ui, sans-serif;
+  font-size: 14px; letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid var(--hair); padding: 9px 16px; border-radius: 2px;
+  white-space: nowrap; color: var(--ink-2);
+}
+@media (max-width: 720px) {
+  .gallery-link { grid-template-columns: 1fr; gap: 14px; }
+  .gl-strip img { width: 46px; height: 62px; }
+  .gl-go { justify-self: start; }
 }
 
 /* ------------------------------------------------------------------ layout */
@@ -276,7 +309,7 @@ footer code {
     <code>.rec</code> logs and its journal.
   </p>
   <div class="coords" id="coords"></div>
-  <p class="crosslink"><a href="gallery.html">The week on camera: every image and time-lapse, on the record &rarr;</a></p>
+
 </header>
 
 <section id="overview">
@@ -287,6 +320,19 @@ footer code {
     them where a number is worth feeling rather than reading.
   </p>
   <div class="stats" id="stats"></div>
+
+  <a class="gallery-link" href="gallery.html">
+    <span class="gl-strip" id="gl-strip"></span>
+    <span>
+      <span class="gl-eyebrow">Companion page</span>
+      <p class="gl-title">The week on camera</p>
+      <p class="gl-sub">Every panorama, stacked exposure and time-lapse the mast
+        camera made, laid out on this same week &mdash; with the wind above read
+        out over each one as it plays.</p>
+    </span>
+    <span class="gl-go">Open gallery &rarr;</span>
+  </a>
+
   <div class="caveat" id="coverage-note"></div>
 </section>
 
@@ -417,6 +463,8 @@ footer code {
 </section>
 
 <footer>
+  <p><a href="gallery.html">The week on camera &rarr;</a> &mdash; every image and
+  time-lapse from the mast, with this page's wind read out over them.</p>
   <p id="prov"></p>
   <p>
     Built by <code>report/build.py</code> from <code>beacon-data-2026/</code>:
@@ -1149,7 +1197,21 @@ if (INLINE) {
   boot(INLINE);
 } else {
   // Only reached in the source file before build.py has run.
-  fetch("data.json").then(r => r.json()).then(boot).catch(err => {
+  // Three real frames in the link card, spread across the week so it looks like
+// the gallery rather than like a button.  Optional: if media.json is missing -
+// a build without the pipeline - the card keeps its text and drops the strip.
+fetch("media.json").then(r => r.json()).then(m => {
+  const strip = document.getElementById("gl-strip");
+  if (!strip) return;
+  const pool = (m.stills || []).filter(i => i.thumb);
+  if (!pool.length) return;
+  const pick = [0, pool.length >> 1, pool.length - 1]
+    .filter((v, i, a) => a.indexOf(v) === i);
+  strip.innerHTML = pick.map(i =>
+    `<img src="${pool[i].thumb}" alt="" loading="lazy" decoding="async">`).join("");
+}).catch(() => {});
+
+fetch("data.json").then(r => r.json()).then(boot).catch(err => {
     document.querySelector(".wrap").insertAdjacentHTML("beforeend",
       `<div class="caveat"><h3>No data in this file</h3>
        <p>${err}. Run <code>python3 report/build.py</code>, which writes the
