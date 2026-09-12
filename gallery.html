@@ -351,7 +351,7 @@ const fmtDate = t => asPDT(t).toUTCString().slice(5, 11);
 const fmtTime = t => asPDT(t).toUTCString().slice(17, 22);
 const fmtFull = t => `${fmtDay(t)} ${fmtDate(t)} ${fmtTime(t)}`;
 
-let D = null, M = null, ITEMS = [], VIEW = [], WIND = new Map();
+let D = null, M = null, ITEMS = [], UNDATED = [], VIEW = [], WIND = new Map();
 const show = { video: true, pano: true, stack: true, still: true,
                day: true, twilight: true, night: true };
 
@@ -509,8 +509,9 @@ function drawGrid() {
     card.innerHTML = `
       <img class="shot" src="${item.thumb}" alt="${item.title}" loading="lazy" decoding="async">
       <span class="meta">
-        <span class="when">${fmtFull(item.t)}${item.until && item.until - item.t > 1800
-          ? " → " + fmtTime(item.until) : ""}</span>
+        <span class="when">${item.t == null ? "Time not recovered"
+          : fmtFull(item.t) + (item.until && item.until - item.t > 1800
+            ? " → " + fmtTime(item.until) : "")}</span>
         <span class="name">${item.title}</span>
         <span class="wind"><span class="tag" style="background:${colour}"></span>${
           item.kind === "video" ? item.frames + " frames"
@@ -590,24 +591,34 @@ function open(item) {
     v.poster = item.thumb;
     stage.appendChild(v);
 
-    let panel = readout(item.t);
-    stage.appendChild(panel);
+    // Without a frame-time table there is no honest wind to show against this
+    // clip, so it plays with no readout rather than one pinned to a guess.
+    if (!item.times || !item.times.length) {
+      const none = document.createElement("div");
+      none.className = "readout";
+      none.innerHTML =
+        '<div class="r-none">No frame-time table for this render, '
+        + 'so no wind can be matched to it.</div>';
+      stage.appendChild(none);
+    } else {
+      let panel = readout(item.times[0]);
+      stage.appendChild(panel);
 
-    // Playback position maps onto wall-clock time through the frame table the
-    // render was made from, so the readout is the wind in the frame on screen
-    // rather than an average over the clip.
-    const tick = () => {
-      if (!v.isConnected) return;
-      const i = Math.min(item.times.length - 1,
-                         Math.max(0, Math.round(v.currentTime / item.duration
-                                                * (item.frames - 1))));
-      const t = item.times[i];
-      const next = readout(t);
-      panel.replaceWith(next);
-      panel = next;
+      // Playback position maps onto wall-clock time through the frame table the
+      // render was made from, so the readout is the wind in the frame on screen
+      // rather than an average over the clip.
+      const tick = () => {
+        if (!v.isConnected) return;
+        const i = Math.min(item.times.length - 1,
+                           Math.max(0, Math.round(v.currentTime / item.duration
+                                                  * (item.frames - 1))));
+        const next = readout(item.times[i]);
+        panel.replaceWith(next);
+        panel = next;
+        raf = requestAnimationFrame(tick);
+      };
       raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    }
   } else {
     const img = document.createElement("img");
     img.src = item.view;
@@ -621,7 +632,9 @@ function open(item) {
   $("box-title").textContent = item.title;
   const w = windAt(item.t);
   const bits = [];
-  if (item.days > 1)
+  if (item.t == null)
+    bits.push("Time not recovered for this render");
+  else if (item.days > 1)
     bits.push(`Pooled from ${item.days} days, ${fmtFull(item.from)} to ${fmtFull(item.to)}`);
   else if (item.until && item.until - item.t > 1800)
     bits.push(`${fmtFull(item.t)} to ${fmtFull(item.until)}`);
@@ -645,11 +658,12 @@ function step(by) {
 
 /* ------------------------------------------------------------- wiring */
 function applyFilters() {
-  VIEW = ITEMS.filter(i => {
+  const keep = i => {
     if (!show[i.kind]) return false;
     if (i.kind !== "video" && i.light && !show[i.light]) return false;
     return true;
-  });
+  };
+  VIEW = [...ITEMS.filter(keep), ...UNDATED.filter(keep)];
   drawGrid();
   drawTimeline();
 }
@@ -668,8 +682,11 @@ function boot([data, manifest]) {
   M = manifest;
   WIND = indexWind(D);
 
-  ITEMS = [...M.videos.map(v => ({ ...v, kind: "video" })), ...M.stills]
-    .sort((a, b) => a.t - b.t);
+  // A render with no frame-time table has no place on a timeline, so it is kept
+  // out of ITEMS and shown in the grid only - see UNDATED below.
+  const all = [...M.videos.map(v => ({ ...v, kind: "video" })), ...M.stills];
+  ITEMS = all.filter(i => i.t != null).sort((a, b) => a.t - b.t);
+  UNDATED = all.filter(i => i.t == null);
 
   applyFilters();
 
@@ -697,8 +714,10 @@ function boot([data, manifest]) {
   });
 
   const counts = { video: 0, pano: 0, stack: 0, still: 0 };
-  for (const i of ITEMS) counts[i.kind]++;
-  const outside = ITEMS.filter(i => !windAt(i.t)).length;
+  for (const i of [...ITEMS, ...UNDATED]) counts[i.kind]++;
+  const outside = ITEMS.filter(i => i.kind !== "video" && !windAt(i.t)).length;
+  const untimed = [...ITEMS, ...UNDATED].filter(
+    i => i.kind === "video" && (!i.times || !i.times.length)).length;
 
   $("notes").innerHTML = `
     <h3>What is here, and what the wind readout means</h3>
@@ -713,6 +732,9 @@ function boot([data, manifest]) {
     <a href="index.html" style="color:#f0803f">instrument page</a>.
     ${outside} item${outside === 1 ? "" : "s"} fall outside the recorded week and
     say <em>no wind recorded</em> rather than borrowing a nearby reading.</p>
+    ${untimed ? `<p>${untimed} render${untimed === 1 ? " has" : "s have"} no
+      frame-time table, so ${untimed === 1 ? "it plays" : "they play"} with no
+      wind readout rather than one pinned to a guess.</p>` : ""}
     ${M.broken.length ? `<p><b>Not published:</b> ${M.broken.map(b =>
       `<code>${b.id}</code> — ${b.note}`).join("; ")}</p>` : ""}`;
 
