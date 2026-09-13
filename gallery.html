@@ -157,6 +157,9 @@ button.seg:focus-visible, a:focus-visible, .card:focus-visible { outline: 2px so
   width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block;
   background: var(--sunk); max-width: 100%;
 }
+/* A panorama's thumbnail is already a wide centre crop (see derive.py); a 3/4
+   card would crop that crop down to a slot. */
+.card.wide .shot { aspect-ratio: 8 / 5; }
 .card .meta { padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 3px; }
 .card .when {
   font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--ink-2);
@@ -187,6 +190,28 @@ dialog#box::backdrop { background: var(--scrim); }
 }
 .stage img, .stage video {
   max-width: 100%; max-height: 100%; object-fit: contain; display: block;
+}
+/* A 10.6:1 sweep fitted to the width of a laptop is about 180px tall - the whole
+   point of the picture is gone.  Panoramas get a scroller instead: full height,
+   overflowing sideways, dragged or arrow-keyed along. */
+.stage.pan { display: block; padding: 16px 0 0; overflow: hidden; }
+.pan-strip {
+  height: 100%; overflow-x: auto; overflow-y: hidden;
+  cursor: grab; scrollbar-width: thin;
+  overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+}
+.pan-strip.dragging { cursor: grabbing; scroll-behavior: auto; }
+.pan-strip img {
+  height: 100%; width: auto; max-width: none; max-height: 100%;
+  object-fit: none; display: block; user-select: none; -webkit-user-drag: none;
+}
+.pan-hint {
+  position: absolute; right: 26px; bottom: 14px;
+  font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .04em;
+  text-transform: uppercase; color: rgba(255,255,255,.72);
+  background: rgba(8,8,7,.72); border: 1px solid rgba(255,255,255,.18);
+  padding: 7px 10px; border-radius: 3px; backdrop-filter: blur(6px);
+  pointer-events: none; transition: opacity .3s;
 }
 /* The readout sits over the media, bottom-left, where a burned-in timecode
    would go on a camera - and it is the wind at the instant on screen. */
@@ -379,6 +404,7 @@ const fmtTime = t => asPDT(t).toUTCString().slice(17, 22);
 const fmtFull = t => `${fmtDay(t)} ${fmtDate(t)} ${fmtTime(t)}`;
 
 let D = null, M = null, ITEMS = [], UNDATED = [], VIEW = [], WIND = new Map();
+let panStrip = null;      // the open panorama's scroller, when one is showing
 const show = { video: true, pano: true, stack: true, still: true,
                day: true, twilight: true, night: true };
 
@@ -531,7 +557,7 @@ function drawGrid() {
   host.replaceChildren();
   for (const item of VIEW) {
     const card = document.createElement("button");
-    card.className = "card";
+    card.className = item.pan ? "card wide" : "card";
     card.type = "button";
     const w = item.kind === "video" ? null : windAt(item.t);
     const colour = item.kind === "video" ? "var(--accent)"
@@ -722,6 +748,8 @@ function open(item) {
   current = item;
   const stage = $("stage");
   stage.replaceChildren();
+  stage.classList.remove("pan");
+  panStrip = null;
   cancelAnimationFrame(raf);
 
   if (item.kind === "video") {
@@ -768,6 +796,66 @@ function open(item) {
         setReadout(panel, item.times[i], windNear(item.times[i]), gap);
       };
       raf = requestAnimationFrame(tick);
+    }
+  } else if (item.pan) {
+    // A 10.6:1 sweep fitted to the window is a 180px line.  Shown at full height
+    // in a horizontal scroller instead, opened at the middle, and pannable by
+    // drag, wheel or arrow key.
+    stage.classList.add("pan");
+    const strip = document.createElement("div");
+    strip.className = "pan-strip";
+    const img = document.createElement("img");
+    img.src = item.view;
+    img.alt = item.title;
+    img.draggable = false;
+    strip.appendChild(img);
+    stage.appendChild(strip);
+    panStrip = strip;
+
+    // Open on the centre of the panorama rather than its left edge: the seam is
+    // at the ends, so the middle is the part worth landing on.
+    const centre = () => {
+      strip.scrollLeft = (strip.scrollWidth - strip.clientWidth) / 2;
+    };
+    if (img.complete) centre(); else img.addEventListener("load", centre, { once: true });
+
+    let down = false, startX = 0, startScroll = 0;
+    strip.addEventListener("pointerdown", ev => {
+      down = true; startX = ev.clientX; startScroll = strip.scrollLeft;
+      strip.classList.add("dragging");
+      strip.setPointerCapture(ev.pointerId);
+    });
+    strip.addEventListener("pointermove", ev => {
+      if (!down) return;
+      strip.scrollLeft = startScroll - (ev.clientX - startX);
+    });
+    const up = ev => {
+      down = false; strip.classList.remove("dragging");
+      if (ev.pointerId != null && strip.hasPointerCapture(ev.pointerId))
+        strip.releasePointerCapture(ev.pointerId);
+    };
+    strip.addEventListener("pointerup", up);
+    strip.addEventListener("pointercancel", up);
+    // A vertical wheel over a horizontal strip should still travel along it.
+    strip.addEventListener("wheel", ev => {
+      if (Math.abs(ev.deltaY) <= Math.abs(ev.deltaX)) return;
+      ev.preventDefault();
+      strip.scrollLeft += ev.deltaY;
+    }, { passive: false });
+
+    const hint = document.createElement("div");
+    hint.className = "pan-hint";
+    hint.textContent = "drag to pan";
+    stage.appendChild(hint);
+    // The hint is for the first moment only; once the reader has moved the
+    // strip they know, and it stops covering the picture.
+    strip.addEventListener("scroll", () => { hint.style.opacity = "0"; },
+                           { once: true });
+
+    if (!(item.days > 1)) {
+      const panel = makeReadout();
+      stage.appendChild(panel);
+      setReadout(panel, item.t, windNear(item.t));
     }
   } else {
     const img = document.createElement("img");
@@ -863,8 +951,22 @@ function boot([data, manifest]) {
   });
   addEventListener("keydown", ev => {
     if (!$("box").open) return;
-    if (ev.key === "ArrowLeft") step(-1);
-    if (ev.key === "ArrowRight") step(1);
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    const back = ev.key === "ArrowLeft";
+    // While a panorama is open the arrows pan along it, which is what they
+    // obviously mean there; Shift makes them step to the next item instead.
+    if (panStrip && !ev.shiftKey) {
+      const atEnd = back
+        ? panStrip.scrollLeft <= 0
+        : panStrip.scrollLeft >= panStrip.scrollWidth - panStrip.clientWidth - 1;
+      if (!atEnd) {
+        ev.preventDefault();
+        panStrip.scrollBy({ left: (back ? -1 : 1) * panStrip.clientWidth * 0.6,
+                            behavior: "smooth" });
+        return;
+      }
+    }
+    step(back ? -1 : 1);
   });
 
   const counts = { video: 0, pano: 0, stack: 0, still: 0 };
@@ -884,6 +986,10 @@ function boot([data, manifest]) {
     ${counts.stack} stacked exposures and ${counts.video} time-lapses. Each
     panorama is one rotation of the mast, so it covers a few minutes rather than
     an instant, and the timeline draws it at its real width.</p>
+    <p>A sweep is a 10.6:1 strip &mdash; 10800&times;1020 before it is sized for
+    the web &mdash; so fitting one to the window would leave it about 180px tall.
+    Panoramas open at full height in a scroller instead: drag, scroll or use the
+    arrow keys to pan along one, and shift-arrow to move to the next picture.</p>
     <p>The time-lapses carry a frame-by-frame time axis, so the wind readout
     follows playback rather than averaging the clip. That axis is rebuilt from
     the catalogue and the rendered frames rather than read from the csv each
