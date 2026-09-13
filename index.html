@@ -1205,10 +1205,21 @@ fetch("media.json").then(r => r.json()).then(m => {
   if (!strip) return;
   const pool = (m.stills || []).filter(i => i.thumb);
   if (!pool.length) return;
-  const pick = [0, pool.length >> 1, pool.length - 1]
-    .filter((v, i, a) => a.indexOf(v) === i);
+  // One frame per light rather than three by position: the collection is sorted
+  // by time and both ends of it are night, so first/middle/last drew three dark
+  // thumbnails and made the week look like one long night.
+  const pick = [];
+  for (const light of ["day", "twilight", "night"]) {
+    const of = pool.filter(i => i.light === light);
+    if (of.length) pick.push(of[of.length >> 1]);
+  }
+  while (pick.length < 3 && pick.length < pool.length) {
+    const next = pool.find(i => !pick.includes(i));
+    if (!next) break;
+    pick.push(next);
+  }
   strip.innerHTML = pick.map(i =>
-    `<img src="${pool[i].thumb}" alt="" loading="lazy" decoding="async">`).join("");
+    `<img src="${i.thumb}" alt="" loading="lazy" decoding="async">`).join("");
 }).catch(() => {});
 
 fetch("data.json").then(r => r.json()).then(boot).catch(err => {

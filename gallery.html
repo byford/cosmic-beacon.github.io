@@ -290,8 +290,9 @@ code { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(-
   <h1>The Week<br>on Camera</h1>
   <p class="standfirst">
     Every panorama, stack and time-lapse the mast camera produced at Black Rock
-    City, laid out on the week they happened. Open any of them and the wind
-    recorded at that moment is read out over the picture &mdash; and as a
+    City &mdash; full 360&deg; rotations by day, at twilight and through the
+    night &mdash; laid out on the week they happened. Open any of them and the
+    wind recorded at that moment is read out over the picture &mdash; and as a
     time-lapse plays, the readout follows it minute by minute.
   </p>
   <p class="crosslink"><a href="index.html">&larr; The instrument record: wind, position, temperature</a></p>
@@ -317,7 +318,6 @@ code { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(-
   <button class="seg" id="f-video" aria-pressed="true">Time-lapses</button>
   <button class="seg" id="f-pano" aria-pressed="true">Panoramas</button>
   <button class="seg" id="f-stack" aria-pressed="true">Stacks</button>
-  <button class="seg" id="f-still" aria-pressed="true">Stills</button>
   <span class="label" style="margin-left:10px">Light</span>
   <button class="seg" id="f-day" aria-pressed="true">Day</button>
   <button class="seg" id="f-twilight" aria-pressed="true">Twilight</button>
@@ -395,7 +395,11 @@ const windAt = t => WIND.get(Math.floor(t / D.bin) * D.bin) || null;
 /* ------------------------------------------------------------- timeline */
 function drawTimeline() {
   const host = $("timeline");
-  const W = 1140, H = 262, M0 = { t: 60, r: 16, b: 26, l: 40 };
+  // Six media lanes, not four: the pipeline now emits 44 panoramas where it once
+  // emitted 7, and at the narrowest width four lanes left 6 marks stacked on top
+  // of one another.  Six clears every collision down to the 760px minimum.
+  const LANES = 6;
+  const W = 1140, H = 284, M0 = { t: 82, r: 16, b: 26, l: 40 };
   const iw = W - M0.l - M0.r, ih = H - M0.t - M0.b;
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
     "aria-label": "Every image and video placed on the week, over wind speed" });
@@ -462,7 +466,7 @@ function drawTimeline() {
 
   // Media above the plot: videos as spans, everything else as a mark.  Rows are
   // assigned so that marks close in time do not land on top of each other.
-  const rows = [[], [], [], []];
+  const rows = Array.from({ length: LANES }, () => []);
   const place = item => {
     const x = X(item.t);
     for (let r = 0; r < rows.length; r++) {
@@ -841,7 +845,7 @@ function boot([data, manifest]) {
   applyFilters();
 
   toggle("f-video", "video"); toggle("f-pano", "pano");
-  toggle("f-stack", "stack"); toggle("f-still", "still");
+  toggle("f-stack", "stack");
   toggle("f-day", "day"); toggle("f-twilight", "twilight");
   toggle("f-night", "night");
 
@@ -865,17 +869,27 @@ function boot([data, manifest]) {
 
   const counts = { video: 0, pano: 0, stack: 0, still: 0 };
   for (const i of [...ITEMS, ...UNDATED]) counts[i.kind]++;
+  // Panoramas come in three lights now, and which they are is the interesting
+  // part: a night 360 is a different object from a midday one.
+  const byLight = { day: 0, twilight: 0, night: 0 };
+  for (const i of ITEMS) if (i.kind === "pano") byLight[i.light || "day"]++;
   const outside = ITEMS.filter(i => i.kind !== "video" && !windAt(i.t)).length;
   const untimed = [...ITEMS, ...UNDATED].filter(
     i => i.kind === "video" && (!i.times || !i.times.length)).length;
 
   $("notes").innerHTML = `
     <h3>What is here, and what the wind readout means</h3>
-    <p>${counts.still} sharpest-frame stills, ${counts.pano} panorama sweeps,
-    ${counts.stack} stacked exposures and ${counts.video} time-lapses. The
-    time-lapses carry a frame-by-frame time axis recovered from the pipeline's
-    own record of which frames went into them, so the wind readout follows
-    playback rather than averaging the clip.</p>
+    <p>${counts.pano} panorama sweeps — ${byLight.day} by day,
+    ${byLight.twilight} at twilight, ${byLight.night} at night — plus
+    ${counts.stack} stacked exposures and ${counts.video} time-lapses. Each
+    panorama is one rotation of the mast, so it covers a few minutes rather than
+    an instant, and the timeline draws it at its real width.</p>
+    <p>The time-lapses carry a frame-by-frame time axis, so the wind readout
+    follows playback rather than averaging the clip. That axis is rebuilt from
+    the catalogue and the rendered frames rather than read from the csv each
+    render leaves behind: a resumed render only logs the frames it redid, and
+    the night lapse's csv covers 230 of its 1267 frames. Rebuilding reproduced
+    every row of the one complete csv exactly.</p>
     <p>The wind is the ten-minute bin containing that moment: its mean, its gust,
     and the direction corrected by the ${D.heading ? D.heading.offset + "°" : ""}
     mast offset recovered on the
